@@ -175,10 +175,14 @@ def minimax_onca(posicao_inicial_pecas, matriz_adjacencias, profundidade):
     def max_value(estado, profundidade):
         if condicao_vitoria(estado.index(-1), estado, matriz_adjacencias) == "Vitória da Onça" or profundidade == 0:
             return utilidade_onca_1(estado), estado
+        
+        filhos = gerar_estados_futuros_onca(estado, matriz_adjacencias)
+        if not filhos:
+            return utilidade_onca_1(estado), None  # Não há jogadas possíveis
 
         v = -math.inf
         melhor_estado = None
-        for filho in gerar_estados_futuros_onca(estado, matriz_adjacencias):
+        for filho in filhos:
             v2, _ = min_value(filho, profundidade - 1)
             if v2 > v:
                 v = v2
@@ -190,9 +194,14 @@ def minimax_onca(posicao_inicial_pecas, matriz_adjacencias, profundidade):
         if condicao_vitoria(estado.index(-1), estado, matriz_adjacencias) == "Vitória dos Cachorros" or profundidade == 0:
             return utilidade_onca_1(estado), estado
 
+
+        filhos = gerar_estados_futuros_cachorros(estado, matriz_adjacencias)
+        if not filhos:
+            return utilidade_onca_1(estado), None  # Nenhum movimento
+        
         v = math.inf
         pior_estado = None
-        for filho in gerar_estados_futuros_cachorros(estado, matriz_adjacencias):
+        for filho in filhos:
             v2, _ = max_value(filho, profundidade - 1)
             if v2 < v:
                 v = v2
@@ -201,8 +210,6 @@ def minimax_onca(posicao_inicial_pecas, matriz_adjacencias, profundidade):
         return v, pior_estado
 
     _, melhor_estado = max_value(posicao_inicial_pecas, profundidade)
-    print (melhor_estado)
-    print (melhor_estado.index(-1))
     return melhor_estado
 
 
