@@ -97,10 +97,12 @@ def movimentos_validos_onca(posicao,posicao_inicial_pecas, matriz_adjacencias):
       if posicao_inicial_pecas[i] == 1:    #Verifica se a casa adjacente possui algum cachorro
           for j in range(len(matriz_adjacencias)):
               if matriz_adjacencias[i][j] == 1 and posicao_inicial_pecas[j] == 0: #Verifica se as casas adjacentes ao cachorro estão vazia para realizar o salto
-                  if j== (posicao + 2*(i-posicao)): #Calcula se a posição após captura um cachorro está correta
+                  if j == (i + (i - posicao)): #Calcula se a posição após captura um cachorro está correta
                     movimentos_possiveis.append(j)  #Adiciona o movimento a lista de movimentos validos
 
   return movimentos_possiveis
+
+
 
 
 def movimentos_validos_cachorros(posicao,posicao_inicial_pecas, matriz_adjacencias):
@@ -239,7 +241,7 @@ def draw_board():
     # Fim de jogo
     if fim_de_jogo:
         txt_fim = font.render(f"FIM DE JOGO! {vencedor}", True, (255, 0, 0))
-        screen.blit(txt_fim, (250, 400))
+        screen.blit(txt_fim, (275, 700))
 
 def get_vertex_clicked(mouse_pos):
     for i, pos in enumerate(vertex_positions):
