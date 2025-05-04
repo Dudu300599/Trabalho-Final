@@ -67,6 +67,42 @@ def inicializacao():
 
   return posicao_inicial_pecas
 
+#Mapea os saltos da onça PosiçãoAtual:[(PosiçãoDestino, CasaSaltada)]
+saltos_onca = {
+    0: [(2, 1), (10, 5), (12, 6)],
+    1: [(11, 6), (3, 2)],
+    2: [(0, 1), (4, 3), (10, 6), (12, 7), (14, 8)],
+    3: [(1, 2), (13, 8)],
+    4: [(2, 3), (14, 9), (12, 8)], 
+    5: [(7, 6), (15, 10)], 
+    6: [(16, 11), (8, 7), (18, 12)], 
+    7: [(5, 6), (9, 8), (17, 12)], 
+    8: [(6, 7), (18, 13), (16, 12)], 
+    9: [(8, 7), (19, 14)], 
+    10:[(0, 5), (12, 11), (20, 15), (2, 6), (22, 16)], 
+    11:[(1, 6), (21, 16), (13, 12)], 
+    12:[(0, 6), (2, 7), (4, 8), (10, 11), (14, 13), (20, 16), (22, 17), (24, 18)],
+    13:[(11, 12), (3, 8), (23, 18)], 
+    14:[(4, 9), (12, 13), (24, 19), (22,18)], 
+    15:[(5, 10), (17, 16)], 
+    16:[(6, 11), (8, 12), (18, 17), (27,22)], 
+    17:[(15, 16), (7, 12), (19, 18), (26,22)], 
+    18:[(8, 13), (6, 12), (16, 17), (25,22)], 
+    19:[(17, 18), (9, 14)], 
+    20:[(10, 15), (22, 21), (12, 16)], 
+    21:[(11, 16), (23, 22)], 
+    22:[(10, 16), (12, 17), (14, 18), (20,21), (24,23), (28,25), (29,26), (30,27)], 
+    23:[(21, 22), (13, 18)], 
+    24:[(14, 19), (12, 18), (22, 23)], 
+    25:[(18, 22), (27, 26)], 
+    26:[(17, 22)], 
+    27:[(16, 22), (25, 26)], 
+    28:[(22, 25), (30, 29)], 
+    29:[(22, 26)], 
+    30:[(22, 27), (28, 29)], 
+}
+
+
 estado_do_jogo = inicializacao()
 
 WHITE = (255, 255, 255)
@@ -87,20 +123,21 @@ capturados = 0
 fim_de_jogo = False
 vencedor = None
 
-def movimentos_validos_onca(posicao,posicao_inicial_pecas, matriz_adjacencias):
-  movimentos_possiveis = []
-  posicao = int(posicao)
-  for i in range(len(matriz_adjacencias)):
-    if matriz_adjacencias[posicao][i] == 1: #Verifica se tem aresta entre o vértice atual da peça e outros vértices
-      if posicao_inicial_pecas[i] == 0:     #Verifica se a casa adjacente está vazia
-        movimentos_possiveis.append(i)     #Adiciona o movimento a lista de movimentos validos
-      if posicao_inicial_pecas[i] == 1:    #Verifica se a casa adjacente possui algum cachorro
-          for j in range(len(matriz_adjacencias)):
-              if matriz_adjacencias[i][j] == 1 and posicao_inicial_pecas[j] == 0: #Verifica se as casas adjacentes ao cachorro estão vazia para realizar o salto
-                  if j== (posicao + 2*(i-posicao)): #Calcula se a posição após captura um cachorro está correta
-                    movimentos_possiveis.append(j)  #Adiciona o movimento a lista de movimentos validos
+def movimentos_validos_onca(posicao, posicao_inicial_pecas, matriz_adjacencias, saltos_onca):
+    movimentos_possiveis = []
+    posicao = int(posicao)
 
-  return movimentos_possiveis
+    # Movimentos normais
+    for i in range(len(matriz_adjacencias)):
+        if matriz_adjacencias[posicao][i] == 1 and posicao_inicial_pecas[i] == 0:
+            movimentos_possiveis.append(i)
+
+    # Saltos (capturas)
+    for destino, meio in saltos_onca.get(posicao, []):
+        if posicao_inicial_pecas[meio] == 1 and posicao_inicial_pecas[destino] == 0:
+            movimentos_possiveis.append(destino)
+
+    return movimentos_possiveis
 
 
 def movimentos_validos_cachorros(posicao,posicao_inicial_pecas, matriz_adjacencias):
@@ -115,7 +152,7 @@ def condicao_vitoria(posicao, posicao_pecas, matriz_adjacencias):
     qnt_cachorros = posicao_pecas.count(1)
     if qnt_cachorros <= 9:
         return "Vitória da Onça"
-    if movimentos_validos_onca(posicao, posicao_pecas, matriz_adjacencias) == []:
+    if movimentos_validos_onca(posicao, posicao_pecas, matriz_adjacencias,saltos_onca) == []:
         return "Vitória dos Cachorros"
     return None
 
@@ -129,20 +166,18 @@ def utilidade_onca_1(posicao_inicial_pecas): #função utilidade sugerida pelo a
 def gerar_estados_futuros_onca(posicao_inicial_pecas, matriz_adjacencias):
     filhos = []
     pos_onca = posicao_inicial_pecas.index(-1)
-    movimentos = movimentos_validos_onca(pos_onca, posicao_inicial_pecas, matriz_adjacencias)
+    movimentos = movimentos_validos_onca(pos_onca, posicao_inicial_pecas, matriz_adjacencias,saltos_onca)
 
     for pos_destino in movimentos:
         nova_pos = posicao_inicial_pecas.copy()
 
         # Trata captura
         if matriz_adjacencias[pos_onca][pos_destino] == 0: #Verifica se foi um salto
-            for i in range(len(matriz_adjacencias)):  #Encontra o cachorro saltado
-                if matriz_adjacencias[pos_onca][i] == 1 and matriz_adjacencias[i][pos_destino] == 1:
-                    if (pos_onca < i and i < pos_destino) or (pos_onca > i and i < pos_destino):
-                        if (pos_onca < i and i < pos_destino) or (pos_onca > i and i > pos_destino):
-                            if posicao_inicial_pecas[i] == 1:
-                                nova_pos[i] = 0  #Remove o cachorro capturado
-                                break
+                   for destino, meio in saltos_onca.get(pos_onca, []): #Encontra Cachorro Saltado
+                        if destino == pos_destino:
+                                if nova_pos[meio] == 1:
+                                    nova_pos[meio] = 0  #Remove o cachorro capturado
+                                    break
 
         nova_pos[pos_onca] = 0
         nova_pos[pos_destino] = -1
@@ -246,7 +281,7 @@ def draw_board():
     # Fim de jogo
     if fim_de_jogo:
         txt_fim = font.render(f"FIM DE JOGO! {vencedor}", True, (255, 0, 0))
-        screen.blit(txt_fim, (250, 400))
+        screen.blit(txt_fim, (275, 700))
 
 def get_vertex_clicked(mouse_pos):
     for i, pos in enumerate(vertex_positions):
@@ -266,18 +301,17 @@ def move_piece(from_idx, to_idx):
 
     # Captura (só onça pode)
     if estado_do_jogo[from_idx] == -1 and estado_do_jogo[to_idx] == 0:
-        movimento = movimentos_validos_onca(estado_do_jogo.index(-1),estado_do_jogo,matriz_jogo)
+        movimento = movimentos_validos_onca(estado_do_jogo.index(-1),estado_do_jogo,matriz_jogo,saltos_onca)
         if to_idx in movimento:
             if matriz_jogo[from_idx][to_idx] == 0: #Verifica se foi um salto
-                for i in range(len(matriz_jogo)):  #Encontra o cachorro saltado
-                    if matriz_jogo[from_idx][i] == 1 and matriz_jogo[i][to_idx] == 1:
-                        if (from_idx < i and i < to_idx) or (from_idx > i and i > to_idx):
-                            if estado_do_jogo[i] == 1:
-                                estado_do_jogo[i] = 0  #Remove o cachorro capturado
-                                estado_do_jogo[from_idx] = 0
-                                estado_do_jogo[to_idx] = -1
-                                capturados += 1
-                                break
+                for destino, meio in saltos_onca.get(from_idx, []): #Encontra Cachorro Saltado
+                        if destino == to_idx:
+                                if estado_do_jogo[meio] == 1:
+                                    estado_do_jogo[meio] = 0  #Remove o cachorro capturado
+                                    estado_do_jogo[from_idx] = 0
+                                    estado_do_jogo[to_idx] = -1
+                                    capturados += 1
+                                    break
                 return True
     return False
 
