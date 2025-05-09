@@ -363,14 +363,14 @@ while True:
                             fim_de_jogo = True
                             vencedor = resultado
                         if not fim_de_jogo:
-                            turno = -1  # Troca para a Onça
+                            turno = -1  # Troca para a onça
                             aguardando_movimento_ia = False  # Garante que o delay seja reiniciado no turno da onça
                         selected = None
                     else:
                         selected = None
 
 
-    # Movimento automático da Onça (jogada da IA)
+    # Movimento automatico da onça
     if turno == -1 and not fim_de_jogo:
 
         if not aguardando_movimento_ia:
@@ -379,7 +379,6 @@ while True:
             aguardando_movimento_ia = True
 
         elif pygame.time.get_ticks() - tempo_inicio_espera >= 500: #Tempo de delay
-            # Delay passou, IA pode agir
             inicio = time.time()
             valor ,melhor_jogada = minimax(estado_do_jogo,maximizador=True, profundidade=2) # ajuste a profundidade conforme necessário
             fim = time.time()
