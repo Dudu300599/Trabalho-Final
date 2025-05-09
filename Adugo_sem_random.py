@@ -1,6 +1,8 @@
 import pygame
 import numpy as np
 import sys
+import time
+
 
 #MATRIZ DE ADJACÊNCIA
 matriz_jogo = np.array([[0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -103,7 +105,7 @@ saltos_onca = {
 }
 
 
-estado_do_jogo = inicializacao()
+estado_do_jogo = inicializacao() #Inicializa o estado inicial do tabuleiro
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -122,79 +124,91 @@ turno = -1  # Onça começa
 capturados = 0
 fim_de_jogo = False
 vencedor = None
+nos_visitados = 0
 
-def movimentos_validos_onca(posicao, posicao_inicial_pecas, matriz_adjacencias, saltos_onca):
+
+
+#Função que retorna os movimentos validos da onça, e tem como entrada a posição da onça, o estado atual do tabuleiro e os saltos da onça
+def movimentos_validos_onca(posicao_onca, estado_atual, saltos_onca):
     movimentos_possiveis = []
-    posicao = int(posicao)
 
-    # Movimentos normais
-    for i in range(len(matriz_adjacencias)):
-        if matriz_adjacencias[posicao][i] == 1 and posicao_inicial_pecas[i] == 0:
+    #Movimentos normais
+    for i in range(len(matriz_jogo)):
+        if matriz_jogo[posicao_onca][i] == 1 and estado_atual[i] == 0:
             movimentos_possiveis.append(i)
 
-    # Saltos (capturas)
-    for destino, meio in saltos_onca.get(posicao, []):
-        if posicao_inicial_pecas[meio] == 1 and posicao_inicial_pecas[destino] == 0:
+    #Saltos (capturas)
+    for destino, meio in saltos_onca.get(posicao_onca, []):
+        if estado_atual[meio] == 1 and estado_atual[destino] == 0:
             movimentos_possiveis.append(destino)
 
     return movimentos_possiveis
 
 
-def movimentos_validos_cachorros(posicao,posicao_inicial_pecas, matriz_adjacencias):
+#Função que retorna os movimentos validos dos cachorros, e tem como entrada a posição do cachorro e o estado atual do tabuleiro
+def movimentos_validos_cachorros(posicao_cachorro, estado_atual):
   movimentos_possiveis = []
-  for i in range(len(matriz_adjacencias)):
-    if matriz_adjacencias[posicao][i] == 1: #Verifica se tem aresta entre o vértice atual da peça e outros vértices
-        if posicao_inicial_pecas[i] == 0:   #Verifica se a casa adjacente está vazia
+  for i in range(len(matriz_jogo)):
+    if matriz_jogo[posicao_cachorro][i] == 1: #Verifica se tem aresta entre o vértice atual da peça e outros vértices
+        if estado_atual[i] == 0:   #Verifica se a casa adjacente está vazia
           movimentos_possiveis.append(i)    #Adiciona o movimento a lista de movimentos validos
   return movimentos_possiveis
 
-def condicao_vitoria(posicao, posicao_pecas, matriz_adjacencias):
-    qnt_cachorros = posicao_pecas.count(1)
-    if qnt_cachorros <= 9:
+
+#Função que retorna quem venceu a partida, e tem como entrada posição da onça e o estado atual do tabuleiro
+def condicao_vitoria(posicao_onca, estado_atual):
+    qnt_cachorros = estado_atual.count(1)
+    if qnt_cachorros <= 9: #Verifica se a onça ja capturou 5 cachorros
         return "Vitória da Onça"
-    if movimentos_validos_onca(posicao, posicao_pecas, matriz_adjacencias,saltos_onca) == []:
+    if movimentos_validos_onca(posicao_onca, estado_atual, saltos_onca) == []: #Verifica se a onça nao possui mais movimentos
         return "Vitória dos Cachorros"
     return None
 
-def utilidade_onca_1(posicao_inicial_pecas): #função utilidade sugerida pelo artigo
-  qnt_cachorros = posicao_inicial_pecas.count(1)
-  if qnt_cachorros <= 9:
-    return 1000
-  return 200 * (14-qnt_cachorros)
+
+#Função utilidade sugerida pelo artigo
+def utilidade_onca_1(estado_atual): 
+  qnt_cachorros = estado_atual.count(1)
+  capturas = 14 - qnt_cachorros
+  return capturas * 200
 
 
-def gerar_estados_futuros_onca(posicao_inicial_pecas, matriz_adjacencias):
+#Função que gera os estados os estados futuros da onça, tem como entrada o estado atual do tabuleiro
+#Retorna um vetor com todos os movimentos possiveis da onça a partir do estado atual
+def gerar_estados_futuros_onca(estado_atual):
     filhos = []
-    pos_onca = posicao_inicial_pecas.index(-1)
-    movimentos = movimentos_validos_onca(pos_onca, posicao_inicial_pecas, matriz_adjacencias,saltos_onca)
+    posicao_onca = estado_atual.index(-1)
+    movimentos = movimentos_validos_onca(posicao_onca, estado_atual, saltos_onca)
 
-    for pos_destino in movimentos:
-        nova_pos = posicao_inicial_pecas.copy()
+    for posicao_destino in movimentos:
+        nova_estado = estado_atual.copy()
 
         # Trata captura
-        if matriz_adjacencias[pos_onca][pos_destino] == 0: #Verifica se foi um salto
-                   for destino, meio in saltos_onca.get(pos_onca, []): #Encontra Cachorro Saltado
-                        if destino == pos_destino:
-                                if nova_pos[meio] == 1:
-                                    nova_pos[meio] = 0  #Remove o cachorro capturado
+        if matriz_jogo[posicao_onca][posicao_destino] == 0: #Verifica se foi um salto
+                   for destino, meio in saltos_onca.get(posicao_onca, []): #Encontra Cachorro Saltado
+                        if destino == posicao_destino:
+                                if nova_estado[meio] == 1:
+                                    nova_estado[meio] = 0  #Remove o cachorro capturado
                                     break
 
-        nova_pos[pos_onca] = 0
-        nova_pos[pos_destino] = -1
+        nova_estado[posicao_onca] = 0
+        nova_estado[posicao_destino] = -1
 
-        filhos.append(nova_pos)
+        filhos.append(nova_estado)
+    print("Jogadas possíveis da onça:", len(filhos))
+
 
     return filhos
 
 
 
-
-def gerar_estados_futuros_cachorros(estado_atual, matriz_adjacencias):
+#Função que gera os estados os estados futuros dos cachorros, tem como entrada o estado atual do tabuleiro
+#Retorna um vetor com todos os movimentos possiveis dos cachrros a partir do estado atual
+def gerar_estados_futuros_cachorros(estado_atual):
     filhos = []
 
     for posicao, peca in enumerate(estado_atual):
         if peca == 1:  # Se encontrar um cachorro
-            destinos_validos = movimentos_validos_cachorros(posicao, estado_atual, matriz_adjacencias)
+            destinos_validos = movimentos_validos_cachorros(posicao, estado_atual)
 
             for destino in destinos_validos:
                 novo_estado = estado_atual.copy()
@@ -204,60 +218,59 @@ def gerar_estados_futuros_cachorros(estado_atual, matriz_adjacencias):
 
     return filhos
 
-import math
 
-def minimax_onca(posicao_inicial_pecas, matriz_adjacencias, profundidade):
-    def max_value(estado, profundidade):
-        if condicao_vitoria(estado.index(-1), estado, matriz_adjacencias) == "Vitória da Onça" or profundidade == 0:
-            return utilidade_onca_1(estado), estado
-        
-        filhos = gerar_estados_futuros_onca(estado, matriz_adjacencias)
-        if not filhos:
-            return utilidade_onca_1(estado), None  # Não há jogadas possíveis
+#Função minimax retorna a melhor jogada com base na função objetiva
+#Tem como entrada o estado atual do jogo, um booleano para identificar qual jogador será maximizado e a profundidade da árvore gerada.
+def minimax(estado_atual, maximizador, profundidade, alpha=float('-inf'), beta=float('inf')):
+        global nos_visitados  # Indica que estamos usando a variável global
+        nos_visitados += 1 
+        if profundidade == 0 or condicao_vitoria(estado_atual.index(-1), estado_atual) == "Vitória dos Cachorros" or condicao_vitoria(estado_atual.index(-1), estado_atual) == "Vitória da Onça":
+            utilidade = utilidade_onca_1(estado_atual)
+            return utilidade, estado_atual
 
-        v = -math.inf
-        melhor_estado = None
-        for filho in filhos:
-            v2, _ = min_value(filho, profundidade - 1)
-            if v2 > v:
-                v = v2
-                melhor_estado = filho
-        #print("Valor Melhor: ",v, "Estado: ",melhor_estado.index(-1))
-        return v, melhor_estado
+        if maximizador:
+            maior_avaliacao = float('-inf')
+            melhor_estado = None
+            for filho in gerar_estados_futuros_onca(estado_atual):
+                avaliacao, _ = minimax(filho,False, profundidade - 1)
+                if avaliacao > maior_avaliacao:
+                    maior_avaliacao = avaliacao
+                    melhor_estado = filho
+                #Começa Corte Alpha Beta
+                #if maior_avaliacao >= beta:
+                    #break
+                #alpha = max(alpha, maior_avaliacao)
+                #Acaba Corte Alpha Beta
+            print(f"Valor: {maior_avaliacao}, Melhor Posição: {melhor_estado.index(-1)}")
+            return maior_avaliacao, melhor_estado
+        else:
+            menor_avaliacao = float('inf')
+            melhor_estado = None
+            for filho in gerar_estados_futuros_cachorros(estado_atual):
+                avaliacao, _ = minimax(filho,True, profundidade - 1)
+                if avaliacao < menor_avaliacao:
+                    menor_avaliacao = avaliacao
+                    melhor_estado = filho
+                #Começa Corte Alpha Beta
+                #if maior_avaliacao <= alpha:
+                    #break
+                #beta = min(beta, maior_avaliacao)
+                #Acaba Corte Alpha Beta
+            print(f"Valor: {menor_avaliacao}, Posição: {melhor_estado.index(-1)}")
+            return menor_avaliacao, melhor_estado
 
-    def min_value(estado, profundidade):
-        if condicao_vitoria(estado.index(-1), estado, matriz_adjacencias) == "Vitória dos Cachorros" or profundidade == 0:
-            return utilidade_onca_1(estado), estado
-
-
-        filhos = gerar_estados_futuros_cachorros(estado, matriz_adjacencias)
-        if not filhos:
-            return utilidade_onca_1(estado), None  # Nenhum movimento
-        
-        v = math.inf
-        pior_estado = None
-        for filho in filhos:
-            v2, _ = max_value(filho, profundidade - 1)
-            if v2 < v:
-                v = v2
-                pior_estado = filho
-        #print("Valor Pior: ",v, "Estado: ",pior_estado.index(-1))
-        return v, pior_estado
-
-    _, melhor_estado = max_value(posicao_inicial_pecas, profundidade)
-    return melhor_estado
 
 
 def draw_board():
     screen.fill(WHITE)
 
-    # Arestas
+    # Desenha as Arestas
     for i in range(31):
         for j in range(i+1, 31):
             if matriz_jogo[i][j] == 1:
                 pygame.draw.line(screen, BLACK, vertex_positions[i], vertex_positions[j], 2)
 
-    # Vértices e peças
+    # Desenha os Vértices e as peças
     for i, pos in enumerate(vertex_positions):
         pygame.draw.circle(screen, GRAY, pos, 15)
         if estado_do_jogo[i] == 1:
@@ -265,31 +278,35 @@ def draw_board():
         elif estado_do_jogo[i] == -1:
             pygame.draw.circle(screen, YELLOW, pos, 10)
 
-    # Peça selecionada
+    # Indica visualmente qual peça esta selecionada
     if selected is not None:
         pygame.draw.circle(screen, BLUE, vertex_positions[selected], 20, 3)
 
-    # Turno
+    # Mostra de quem é o turno (Onça ou Cachorros)
     font = pygame.font.SysFont(None, 36)
-    texto = font.render(f"Turno: {'Onça' if turno == 2 else 'Cachorros'}", True, BLACK)
+    texto = font.render(f"Turno: {'Onça' if turno == -1 else 'Cachorros'}", True, BLACK)
     screen.blit(texto, (20, 20))
 
-    # Contagem de capturas
+    # Exibe a Contagem de capturas
     txt_captura = font.render(f"Capturados: {capturados}/5", True, BLACK)
     screen.blit(txt_captura, (20, 60))
 
-    # Fim de jogo
+    # Exibe a mensagem de Fim de jogo
     if fim_de_jogo:
         txt_fim = font.render(f"FIM DE JOGO! {vencedor}", True, (255, 0, 0))
         screen.blit(txt_fim, (275, 700))
 
+
 def get_vertex_clicked(mouse_pos):
+    # Verifica se o clique está próximo de algum vértice (raio de 15px)
     for i, pos in enumerate(vertex_positions):
         dist = (mouse_pos[0] - pos[0]) ** 2 + (mouse_pos[1] - pos[1]) ** 2
         if dist <= 15 ** 2:
             return i
     return None
 
+
+#Função que executa o movimento das peças
 def move_piece(from_idx, to_idx):
     global capturados
 
@@ -301,7 +318,7 @@ def move_piece(from_idx, to_idx):
 
     # Captura (só onça pode)
     if estado_do_jogo[from_idx] == -1 and estado_do_jogo[to_idx] == 0:
-        movimento = movimentos_validos_onca(estado_do_jogo.index(-1),estado_do_jogo,matriz_jogo,saltos_onca)
+        movimento = movimentos_validos_onca(estado_do_jogo.index(-1),estado_do_jogo,saltos_onca)
         if to_idx in movimento:
             if matriz_jogo[from_idx][to_idx] == 0: #Verifica se foi um salto
                 for destino, meio in saltos_onca.get(from_idx, []): #Encontra Cachorro Saltado
@@ -315,14 +332,16 @@ def move_piece(from_idx, to_idx):
                 return True
     return False
 
+#Função que retorna o vértice do meio, quando existe um salto
+#Não utilizada, pois o saltos estão sendo mapeados por um dicionario
 def get_middle_vertex(a, b):
     for mid in range(31):
         if matriz_jogo[a][mid] == 1 and matriz_jogo[mid][b] == 1:
             return mid
     return None
 
-
-
+aguardando_movimento_ia = False
+tempo_inicio_espera = 0
 
 # LOOP PRINCIPAL
 while True:
@@ -339,12 +358,13 @@ while True:
                         selected = idx
                 else:
                     if move_piece(selected, idx):
-                        resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo, matriz_jogo)
+                        resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
                         if resultado in ["Vitória da Onça", "Vitória dos Cachorros"]:
                             fim_de_jogo = True
                             vencedor = resultado
                         if not fim_de_jogo:
                             turno = -1  # Troca para a Onça
+                            aguardando_movimento_ia = False  # Garante que o delay seja reiniciado no turno da onça
                         selected = None
                     else:
                         selected = None
@@ -352,19 +372,37 @@ while True:
 
     # Movimento automático da Onça (jogada da IA)
     if turno == -1 and not fim_de_jogo:
-        melhor_jogada = minimax_onca(estado_do_jogo,matriz_jogo, profundidade=3)  # ajuste a profundidade conforme necessário
-        destino = melhor_jogada.index(-1)
-        origem = estado_do_jogo.index(-1)
-        move_piece(origem, destino)
 
-        resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo, matriz_jogo)
-        if resultado in ["Vitória da Onça", "Vitória dos Cachorros"]:
-            fim_de_jogo = True
-            vencedor = resultado
+        if not aguardando_movimento_ia:
+            # Inicia o tempo de espera da IA
+            tempo_inicio_espera = pygame.time.get_ticks()
+            aguardando_movimento_ia = True
 
-        turno = 1  # Volta para os Cachorros
-        selected = None
+        elif pygame.time.get_ticks() - tempo_inicio_espera >= 500: #Tempo de delay
+            # Delay passou, IA pode agir
+            inicio = time.time()
+            valor ,melhor_jogada = minimax(estado_do_jogo,maximizador=True, profundidade=2) # ajuste a profundidade conforme necessário
+            fim = time.time()
 
-    draw_board()
-    pygame.display.flip()
-    clock.tick(60)
+            print(f"Tempo de execução: {fim - inicio:.4f} segundos") #Exibe tempo de execucao
+            print(f"Nós visitados: {nos_visitados}")                 #Exibe nós visitados
+            nos_visitados = 0
+
+
+            pygame.time.delay(2000) #Adiciona delay ao movimento da onça
+
+            destino = melhor_jogada.index(-1)
+            origem = estado_do_jogo.index(-1)
+            move_piece(origem, destino)
+
+            resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
+            if resultado in ["Vitória da Onça", "Vitória dos Cachorros"]:
+                fim_de_jogo = True
+                vencedor = resultado
+
+            turno = 1  # Volta para os Cachorros
+            selected = None
+
+    draw_board()  # Desenha tudo na tela
+    pygame.display.flip() # Atualiza a janela
+    clock.tick(60)  # Limita para 60 FPS
