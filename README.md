@@ -42,7 +42,19 @@ pip install numpy
 
 ---
 
-### 3️⃣ Execute o jogo
+---
+
+### 3️⃣ Vá até o diretório do jogo
+
+Use o comando `cd` para navegar até a pasta onde está o arquivo do jogo:
+
+```bash
+cd caminho/para/sua/pasta
+```
+
+---
+
+### 4️⃣ Execute o jogo
 
 Ainda no terminal, digite:
 
