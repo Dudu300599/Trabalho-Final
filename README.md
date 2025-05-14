@@ -62,5 +62,5 @@ python nome_do_arquivo.py
 ```
 
 > 🔄 Substitua `nome_do_arquivo.py` pelo nome do arquivo principal do seu jogo, por exemplo:  
-> `python jogo_onca.py`
+> `python Adugo_com_random.py`
 ---
