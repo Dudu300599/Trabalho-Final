@@ -40,8 +40,6 @@ pip install pygame
 pip install numpy
 ```
 
-> Essas bibliotecas são essenciais para a interface do jogo e cálculos numéricos.
-
 ---
 
 ### 3️⃣ Execute o jogo
