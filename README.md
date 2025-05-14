@@ -42,7 +42,6 @@ pip install numpy
 
 ---
 
----
 
 ### 3️⃣ Vá até o diretório do jogo
 
