@@ -24,7 +24,7 @@ python --version
 pip --version
 ```
 
-Se os comandos acima não funcionarem, instale o Python aqui:  
+Se os comandos acima não funcionarem, baixe o Python aqui:  
 🔗 [https://www.python.org/downloads/](https://www.python.org/downloads/)
 
 > ☑️ **Importante:** Marque a opção **"Add Python to PATH"** durante a instalação!
