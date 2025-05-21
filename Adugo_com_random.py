@@ -39,13 +39,15 @@ matriz_jogo = np.array([[0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 
 # --- POSIÇÕES MANUAIS DOS 31 VÉRTICES ---
 vertex_positions = [
-    (250, 50),  (350, 50),  (450, 50),  (550, 50),  (650, 50),
-    (250, 150), (350, 150), (450, 150), (550, 150), (650, 150),
-    (250, 250), (350, 250), (450, 250), (550, 250), (650, 250),
-    (250, 350), (350, 350), (450, 350), (550, 350), (650, 350),
-    (250, 450), (350, 450), (450, 450), (550, 450), (650, 450),
-    (350, 550), (450, 550), (550, 550), (250, 650), (450, 650), (650, 650)
+    (440, 50),  (540, 50),  (640, 50),  (740, 50),  (840, 50),
+    (440, 150), (540, 150), (640, 150), (740, 150), (840, 150),
+    (440, 250), (540, 250), (640, 250), (740, 250), (840, 250),
+    (440, 350), (540, 350), (640, 350), (740, 350), (840, 350),
+    (440, 450), (540, 450), (640, 450), (740, 450), (840, 450),
+    (540, 550), (640, 550), (740, 550), (440, 650), (640, 650), (840, 650)
 ]
+
+
 
 #Vetor com a posição inicial das peças
 #Com -1 representando a onça e 1 represetando os cachorros
@@ -107,15 +109,18 @@ saltos_onca = {
 
 estado_do_jogo = inicializacao() #Inicializa o estado inicial do tabuleiro
 
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
-RED = (200, 50, 50)
-BLUE = (50, 50, 200)
-YELLOW = (230, 230, 0)
+BRANCO = (255, 255, 255)
+LARANJA = (203, 112, 31)
+VERDE_CLARO = (221, 207, 142)
+CREME = (252, 217, 191)
+PRETO = (0, 0, 0)
+CINZA = (200, 200, 200)
+VERMELHO = (200, 50, 50)
+AZUL = (50, 50, 200)
+AMARELO = (230, 230, 0)
 
 pygame.init()
-screen = pygame.display.set_mode((900, 800))
+screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Jogo da Onça")
 clock = pygame.time.Clock()
 
@@ -271,39 +276,50 @@ def minimax(estado_atual, maximizador, profundidade, alpha=float('-inf'), beta=f
 
 
 def draw_board():
-    screen.fill(WHITE)
+    fundo_jogo = pygame.transform.scale(
+        pygame.image.load("imagens/Tabuleiro_Tabuleiro_Frente.png").convert(),
+        (1280,720)
+    )
+    screen.blit(fundo_jogo,(0,0))
 
     # Desenha as Arestas
     for i in range(31):
         for j in range(i+1, 31):
             if matriz_jogo[i][j] == 1:
-                pygame.draw.line(screen, BLACK, vertex_positions[i], vertex_positions[j], 2)
+                pygame.draw.line(screen, BRANCO, vertex_positions[i], vertex_positions[j], 2)
 
     # Desenha os Vértices e as peças
     for i, pos in enumerate(vertex_positions):
-        pygame.draw.circle(screen, GRAY, pos, 15)
+        pygame.draw.circle(screen, CINZA, pos, 15)
         if estado_do_jogo[i] == 1:
-            pygame.draw.circle(screen, RED, pos, 10)
+            pygame.draw.circle(screen, VERMELHO, pos, 10)
         elif estado_do_jogo[i] == -1:
-            pygame.draw.circle(screen, YELLOW, pos, 10)
+            pygame.draw.circle(screen, AMARELO, pos, 10)
 
     # Indica visualmente qual peça esta selecionada
     if selected is not None:
-        pygame.draw.circle(screen, BLUE, vertex_positions[selected], 20, 3)
+        pygame.draw.circle(screen, AZUL, vertex_positions[selected], 20, 3)
 
     # Mostra de quem é o turno (Onça ou Cachorros)
     font = pygame.font.SysFont(None, 36)
-    texto = font.render(f"Turno: {'Onça' if turno == -1 else 'Cachorros'}", True, BLACK)
+    texto = font.render(f"Turno: {'Onça' if turno == -1 else 'Cachorros'}", True, BRANCO)
     screen.blit(texto, (20, 20))
 
     # Exibe a Contagem de capturas
-    txt_captura = font.render(f"Capturados: {capturados}/5", True, BLACK)
+    txt_captura = font.render(f"Capturados: {capturados}/5", True, BRANCO)
     screen.blit(txt_captura, (20, 60))
 
     # Exibe a mensagem de Fim de jogo
     if fim_de_jogo:
-        txt_fim = font.render(f"FIM DE JOGO! {vencedor}", True, (255, 0, 0))
-        screen.blit(txt_fim, (275, 700))
+        screen.blit(fundo_jogo, (0,0))
+        txt_fim = [
+            f"FIM DE JOGO! {vencedor}",
+            "Pressione ESC para voltar ao menu inicial"
+        ]
+        for i, linha in enumerate(txt_fim):
+            txt = font.render(linha, True, BRANCO)
+            screen.blit(txt, (400,300 + i * 50))
+
 
 
 def get_vertex_clicked(mouse_pos):
@@ -352,66 +368,72 @@ def get_middle_vertex(a, b):
 aguardando_movimento_ia = False
 tempo_inicio_espera = 0
 
-# LOOP PRINCIPAL
-while True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-  
-        elif event.type == pygame.MOUSEBUTTONDOWN and not fim_de_jogo and turno == 1: #Turno Manual cachorros
-            idx = get_vertex_clicked(pygame.mouse.get_pos())
-            if idx is not None:
-                if selected is None:
-                    if estado_do_jogo[idx] == turno:
-                        selected = idx
-                else:
-                    if move_piece(selected, idx):
-                        resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
-                        if resultado in ["Vitória da Onça", "Vitória dos Cachorros"]:
-                            fim_de_jogo = True
-                            vencedor = resultado
-                        if not fim_de_jogo:
-                            turno = -1  # Troca para a Onça
-                            aguardando_movimento_ia = False  # Garante que o delay seja reiniciado no turno da onça
-                        selected = None
+def adugo_run():
+    global selected, turno, fim_de_jogo, vencedor, aguardando_movimento_ia, tempo_inicio_espera, nos_visitados
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN and not fim_de_jogo and turno == 1:  # Turno Manual cachorros
+                idx = get_vertex_clicked(pygame.mouse.get_pos())
+                if idx is not None:
+                    if selected is None:
+                        if estado_do_jogo[idx] == turno:
+                            selected = idx
                     else:
-                        selected = None
+                        if move_piece(selected, idx):
+                            resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
+                            if resultado in ["Vitória da Onça", "Vitória dos Cachorros"]:
+                                fim_de_jogo = True
+                                vencedor = resultado
+                                return "menu"
+                            if not fim_de_jogo:
+                                turno = -1  # Troca para a Onça
+                                aguardando_movimento_ia = False  # Reinicia delay da IA
+                            selected = None
+                        else:
+                            selected = None
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return "menu"
+
+        # Movimento automático da Onça (jogada da IA)
+        if turno == -1 and not fim_de_jogo:
+            if not aguardando_movimento_ia:
+                tempo_inicio_espera = pygame.time.get_ticks()
+                aguardando_movimento_ia = True
+            elif pygame.time.get_ticks() - tempo_inicio_espera >= 500:  # Tempo de delay
+                inicio = time.time()
+                valor, melhor_jogada = minimax(estado_do_jogo, maximizador=True, profundidade=2)
+                fim = time.time()
+
+                print(f"Tempo de execução: {fim - inicio:.4f} segundos")
+                print(f"Nós visitados: {nos_visitados}")
+                nos_visitados = 0
+
+                pygame.time.delay(2000)  # Delay extra
+
+                destino = melhor_jogada.index(-1)
+                origem = estado_do_jogo.index(-1)
+                move_piece(origem, destino)
+
+                resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
+                if resultado in ["Vitória da Onça", "Vitória dos Cachorros"]:
+                    fim_de_jogo = True
+                    vencedor = resultado
+
+                turno = 1  # Volta para os Cachorros
+                selected = None
+
+        draw_board()  # Desenha tudo na tela
+
+        
+        pygame.display.flip()  # Atualiza a janela
+        clock.tick(60)  # Limita para 60 FPS
 
 
-    # Movimento automático da Onça (jogada da IA)
-    if turno == -1 and not fim_de_jogo:
-
-        if not aguardando_movimento_ia:
-            # Inicia o tempo de espera da IA
-            tempo_inicio_espera = pygame.time.get_ticks()
-            aguardando_movimento_ia = True
-
-        elif pygame.time.get_ticks() - tempo_inicio_espera >= 500: #Tempo de delay
-            # Delay passou, IA pode agir
-            inicio = time.time()
-            valor ,melhor_jogada = minimax(estado_do_jogo,maximizador=True, profundidade=2) # ajuste a profundidade conforme necessário
-            fim = time.time()
-
-            print(f"Tempo de execução: {fim - inicio:.4f} segundos") #Exibe tempo de execucao
-            print(f"Nós visitados: {nos_visitados}")                 #Exibe nós visitados
-            nos_visitados = 0
-
-
-            pygame.time.delay(2000) #Adiciona delay ao movimento da onça
-
-            destino = melhor_jogada.index(-1)
-            origem = estado_do_jogo.index(-1)
-            move_piece(origem, destino)
-
-            resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
-            if resultado in ["Vitória da Onça", "Vitória dos Cachorros"]:
-                fim_de_jogo = True
-                vencedor = resultado
-
-            turno = 1  # Volta para os Cachorros
-            selected = None
-
-    draw_board()  # Desenha tudo na tela
-    pygame.display.flip() # Atualiza a janela
-    clock.tick(60)  # Limita para 60 FPS
+if __name__ == "__main__":
+    adugo_run()
