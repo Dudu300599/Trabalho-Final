@@ -233,16 +233,16 @@ def minimax(estado_atual, maximizador, profundidade, alpha=float('-inf'), beta=f
             maior_avaliacao = float('-inf')
             melhores_estados = []
             for filho in gerar_estados_futuros_onca(estado_atual):
-                avaliacao, _ = minimax(filho,False, profundidade - 1)
+                avaliacao, _ = minimax(filho,False, profundidade - 1, alpha, beta)
                 if avaliacao > maior_avaliacao:
                     maior_avaliacao = avaliacao
                     melhores_estados = [filho]
                 elif avaliacao == maior_avaliacao:
                     melhores_estados.append(filho)
                 #Começa Corte Alpha Beta
-                #if maior_avaliacao >= beta:
-                    #break
-                #alpha = max(alpha, maior_avaliacao)
+                if avaliacao >= beta:
+                    break
+                alpha = max(alpha, avaliacao)
                 #Acaba Corte Alpha Beta
 
             melhor_estado = random.choice(melhores_estados)
@@ -252,16 +252,16 @@ def minimax(estado_atual, maximizador, profundidade, alpha=float('-inf'), beta=f
             menor_avaliacao = float('inf')
             melhores_estados = []
             for filho in gerar_estados_futuros_cachorros(estado_atual):
-                avaliacao, _ = minimax(filho,True, profundidade - 1)
+                avaliacao, _ = minimax(filho,True, profundidade - 1, alpha, beta)
                 if avaliacao < menor_avaliacao:
                     menor_avaliacao = avaliacao
                     melhores_estados = [filho]
                 elif avaliacao == menor_avaliacao:
                     melhores_estados.append(filho)
                 #Começa Corte Alpha Beta
-                #if maior_avaliacao <= alpha:
-                    #break
-                #beta = min(beta, maior_avaliacao)
+                if avaliacao <= alpha:
+                    break
+                beta = min(beta, avaliacao)
                 #Acaba Corte Alpha Beta
 
             melhor_estado = random.choice(melhores_estados)
@@ -390,7 +390,7 @@ while True:
         elif pygame.time.get_ticks() - tempo_inicio_espera >= 500: #Tempo de delay
             # Delay passou, IA pode agir
             inicio = time.time()
-            valor ,melhor_jogada = minimax(estado_do_jogo,maximizador=True, profundidade=2) # ajuste a profundidade conforme necessário
+            valor ,melhor_jogada = minimax(estado_do_jogo,maximizador=True, profundidade=6) # ajuste a profundidade conforme necessário
             fim = time.time()
 
             print(f"Tempo de execução: {fim - inicio:.4f} segundos") #Exibe tempo de execucao
