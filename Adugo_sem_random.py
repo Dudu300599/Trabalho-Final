@@ -232,14 +232,14 @@ def minimax(estado_atual, maximizador, profundidade, alpha=float('-inf'), beta=f
             maior_avaliacao = float('-inf')
             melhor_estado = None
             for filho in gerar_estados_futuros_onca(estado_atual):
-                avaliacao, _ = minimax(filho,False, profundidade - 1)
+                avaliacao, _ = minimax(filho,False, profundidade - 1, alpha, beta)
                 if avaliacao > maior_avaliacao:
                     maior_avaliacao = avaliacao
                     melhor_estado = filho
                 #Começa Corte Alpha Beta
-                #if maior_avaliacao >= beta:
-                    #break
-                #alpha = max(alpha, maior_avaliacao)
+                if avaliacao >= beta:
+                    break
+                alpha = max(alpha, avaliacao)
                 #Acaba Corte Alpha Beta
             print(f"Valor: {maior_avaliacao}, Melhor Posição: {melhor_estado.index(-1)}")
             return maior_avaliacao, melhor_estado
@@ -247,14 +247,14 @@ def minimax(estado_atual, maximizador, profundidade, alpha=float('-inf'), beta=f
             menor_avaliacao = float('inf')
             melhor_estado = None
             for filho in gerar_estados_futuros_cachorros(estado_atual):
-                avaliacao, _ = minimax(filho,True, profundidade - 1)
+                avaliacao, _ = minimax(filho,True, profundidade - 1, alpha, beta)
                 if avaliacao < menor_avaliacao:
                     menor_avaliacao = avaliacao
                     melhor_estado = filho
                 #Começa Corte Alpha Beta
-                #if maior_avaliacao <= alpha:
-                    #break
-                #beta = min(beta, maior_avaliacao)
+                if avaliacao <= alpha:
+                    break
+                beta = min(beta, avaliacao)
                 #Acaba Corte Alpha Beta
             print(f"Valor: {menor_avaliacao}, Posição: {melhor_estado.index(-1)}")
             return menor_avaliacao, melhor_estado
