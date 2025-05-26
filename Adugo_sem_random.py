@@ -332,13 +332,7 @@ def move_piece(from_idx, to_idx):
                 return True
     return False
 
-#Função que retorna o vértice do meio, quando existe um salto
-#Não utilizada, pois o saltos estão sendo mapeados por um dicionario
-def get_middle_vertex(a, b):
-    for mid in range(31):
-        if matriz_jogo[a][mid] == 1 and matriz_jogo[mid][b] == 1:
-            return mid
-    return None
+
 
 aguardando_movimento_ia = False
 tempo_inicio_espera = 0
