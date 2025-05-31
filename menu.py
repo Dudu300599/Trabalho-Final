@@ -7,6 +7,7 @@ screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Jogo da Onça - Menu Principal")
 clock = pygame.time.Clock()
 font = pygame.font.Font("EldesCordel-Demo.otf", 60)
+font_pequena = pygame.font.Font("EldesCordel-Demo.otf", 45)
 fonte_grande = pygame.font.Font("EldesCordel-Demo.otf", 90)
 icon = pygame.image.load("imagens/icon_onca.png")
 pygame.display.set_icon(icon)
@@ -18,6 +19,7 @@ VERDE_CLARO = (221, 207, 142)
 CREME = (252, 217, 191)
 PRETO = (0, 0, 0)
 LARANJA = (203, 112, 31)
+CINZA = (200, 200, 200)
 
 #background
 fundo_menu = pygame.transform.scale(
@@ -127,9 +129,67 @@ def desenhar_menu_jogar():
 
     return botoes
 
-def eventos_comuns():
+active = False
+text = ''
+
+def desenhar_menu_selecao(eventos):
+    pygame.display.set_caption("Jogo da Onça")
+    screen.blit(fundo_menu, (0,0))
+    screen.blit(logo, (325,0))
+
+    input_box = pygame.Rect(1000, 490, 40,40)
+    color = CINZA
+    global active, text
+
+    opcoes = ["Jogar como Onca", "Jogar como Cachorros", "Nivel de profundidade:"]
+    botoes = []
+
+    for i, texto in enumerate(opcoes):
+        txt_render = font.render(texto, True, CREME)
+        rect = txt_render.get_rect(center=(625,350 + i * 80))
+        botoes.append((texto, txt_render, rect))
+
+    mouse = pygame.mouse.get_pos()
+    for texto, txt_render, rect in botoes:       
+        if texto == "Nivel de profundidade:":
+            if active:
+                cor = VERDE_CLARO
+            elif rect.collidepoint(mouse):
+                cor = VERDE_CLARO
+            else: 
+                cor = CREME
+        else:
+            cor = VERDE_CLARO if rect.collidepoint(mouse) else CREME   
+        txt = font.render(texto, True, cor)
+        screen.blit(txt, rect)
+
+    profundidade_rect = botoes[2][2]
+
+    for event in eventos:
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if profundidade_rect.collidepoint(event.pos):
+                active = not active
+            else:
+                active = False
+
+        if event.type == pygame.KEYDOWN and active:
+            if event.key == pygame.K_BACKSPACE:
+                text = text[:-1]
+            else:
+                text += event.unicode
+
+    
+    txt_surface = font_pequena.render(text, True, PRETO)
+    input_box.w = max(40, txt_surface.get_width() + 10)
+    pygame.draw.rect(screen, color, input_box)
+    screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
+    
+    return botoes
+
+
+def eventos_comuns(eventos):
     global estado
-    for event in pygame.event.get():
+    for event in eventos:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
@@ -137,9 +197,9 @@ def eventos_comuns():
             if event.key == pygame.K_ESCAPE:
                 estado = "menu"
 
-def eventos_menu(botoes):
+def eventos_menu(eventos, botoes):
     global estado
-    for event in pygame.event.get():
+    for event in eventos:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
@@ -159,9 +219,10 @@ def eventos_menu(botoes):
                 estado = "menu"
 
 
-def eventos_menu_jogar(botoes_jogar):
+def eventos_menu_jogar(eventos, botoes_jogar):
     global estado
-    for event in pygame.event.get():
+
+    for event in eventos:
         if event.type == pygame.QUIT:
             pygame.quit()
             exit()
@@ -171,38 +232,61 @@ def eventos_menu_jogar(botoes_jogar):
                     if texto == "Player vs Player":
                         estado = "menu"
                     elif texto == "Player vs Comp":
-                        estado = "jogandovscomp"
-                        adugo_run()
+                        estado = "menu_selecao"
                     elif texto == "Comp vs Comp(fins de estudo)":
                         estado = "menu"
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 estado = 'menu'
+        
+
+def eventos_menu_selecao(eventos, botoes_selecao):
+    global estado
+    for event in eventos:
+        if event.type ==pygame.QUIT:
+            pygame.quit()
+            exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN: 
+            for texto, _, rect in botoes_selecao:
+                if rect.collidepoint(event.pos):
+                    if texto == "Jogar como Onca":
+                        estado = "menu_jogando"
+                    elif texto == "Jogar como Cachorros":
+                        estado = "jogandovscomp"
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                estado == "menu_jogando"
 
 
 def menu_loop():
-    global estado
+    global estado, text
     running = True
 
     while running:
+        eventos = pygame.event.get()
+
         # Desenha de acordo com o estado
         if estado == "menu":
             botoes = desenhar_menu()
-            eventos_menu(botoes)
+            eventos_menu(eventos, botoes)
         elif estado == "regras":
             desenhar_regras()
-            eventos_comuns()
+            eventos_comuns(eventos)
         elif estado == "recordes":
             desenhar_recordes()
-            eventos_comuns()
+            eventos_comuns(eventos)
         elif estado == "creditos":
             desenhar_creditos()
-            eventos_comuns()
+            eventos_comuns(eventos)
         elif estado == "menu_jogando":
             botoes_jogar = desenhar_menu_jogar()
-            eventos_menu_jogar(botoes_jogar)
+            eventos_menu_jogar(eventos, botoes_jogar)
+        elif estado =="menu_selecao":
+            botoes_selecao = desenhar_menu_selecao(eventos)
+            eventos_menu_selecao(eventos, botoes_selecao)
         elif estado == "jogandovscomp":
-            resultado = adugo_run()
+            profundidade = int(text)
+            resultado = adugo_run(profundidade)
             estado = resultado
         elif estado == "sair":
             running == False

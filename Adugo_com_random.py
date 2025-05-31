@@ -47,8 +47,6 @@ vertex_positions = [
     (540, 550), (640, 550), (740, 550), (440, 650), (640, 650), (840, 650)
 ]
 
-
-
 #Vetor com a posição inicial das peças
 #Com -1 representando a onça e 1 represetando os cachorros
 def inicializacao():
@@ -119,10 +117,26 @@ VERMELHO = (200, 50, 50)
 AZUL = (50, 50, 200)
 AMARELO = (230, 230, 0)
 
+
+
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Jogo da Onça")
 clock = pygame.time.Clock()
+
+#IMAGENS
+peca_onca = pygame.transform.scale(
+    pygame.image.load("imagens/ONÇA.png"), (50,50)
+)
+
+peca_cachorro = pygame.transform.scale(
+    pygame.image.load("imagens/CACHORRO.png"), (50,50)
+)
+
+fundo_jogo = pygame.transform.scale(
+    pygame.image.load("imagens/Tabuleiro_Tabuleiro_Frente.png").convert(),
+    (1280,720)
+)
 
 selected = None
 turno = -1  # Onça começa
@@ -130,6 +144,7 @@ capturados = 0
 fim_de_jogo = False
 vencedor = None
 nos_visitados = 0
+cont_turno = 0
 
 
 
@@ -276,10 +291,6 @@ def minimax(estado_atual, maximizador, profundidade, alpha=float('-inf'), beta=f
 
 
 def draw_board():
-    fundo_jogo = pygame.transform.scale(
-        pygame.image.load("imagens/Tabuleiro_Tabuleiro_Frente.png").convert(),
-        (1280,720)
-    )
     screen.blit(fundo_jogo,(0,0))
 
     # Desenha as Arestas
@@ -290,32 +301,55 @@ def draw_board():
 
     # Desenha os Vértices e as peças
     for i, pos in enumerate(vertex_positions):
-        pygame.draw.circle(screen, CINZA, pos, 15)
+        pygame.draw.circle(screen, CINZA, pos, 20)
         if estado_do_jogo[i] == 1:
-            pygame.draw.circle(screen, VERMELHO, pos, 10)
+            rect = peca_cachorro.get_rect(center=pos)
+            screen.blit(peca_cachorro, rect)
         elif estado_do_jogo[i] == -1:
-            pygame.draw.circle(screen, AMARELO, pos, 10)
+            rect = peca_onca.get_rect(center=pos)
+            screen.blit(peca_onca, rect)
+            
 
     # Indica visualmente qual peça esta selecionada
     if selected is not None:
-        pygame.draw.circle(screen, AZUL, vertex_positions[selected], 20, 3)
+        pygame.draw.circle(screen, AZUL, vertex_positions[selected], 30, 3)
+
+    # Mostra o número de turnos
+    font = pygame.font.SysFont(None, 36)
+    txt_Nturnos = font.render(f"Nº de Turnos: {cont_turno}", True, BRANCO)
+    screen.blit(txt_Nturnos, (20,20))
 
     # Mostra de quem é o turno (Onça ou Cachorros)
-    font = pygame.font.SysFont(None, 36)
     texto = font.render(f"Turno: {'Onça' if turno == -1 else 'Cachorros'}", True, BRANCO)
-    screen.blit(texto, (20, 20))
+    screen.blit(texto, (20, 60))
 
     # Exibe a Contagem de capturas
     txt_captura = font.render(f"Capturados: {capturados}/5", True, BRANCO)
-    screen.blit(txt_captura, (20, 60))
+    screen.blit(txt_captura, (20, 100))
 
     # Exibe a mensagem de Fim de jogo
     if fim_de_jogo:
         screen.blit(fundo_jogo, (0,0))
-        txt_fim = [
-            f"FIM DE JOGO! {vencedor}",
+
+        txt_fim_onca = [
+                f"FIM DE JOGO! {vencedor}",
+                f"Depois de {cont_turno} turnos",
+                f"Capturou {capturados} Cachorros",
+                "Pressione ESC para voltar ao menu inicial"
+            ]
+            
+        txt_fim_cachorros = [
+            f"FIM DE JOGO! {vencedor},",
+            f"Depois de {cont_turno} turnos",
+            f"Sacrificou {capturados} Cachorros",
             "Pressione ESC para voltar ao menu inicial"
         ]
+
+        if vencedor == "Vitória da Onça":
+            txt_fim = txt_fim_onca
+        elif vencedor == "Vitória dos Cachorros":
+            txt_fim = txt_fim_cachorros
+
         for i, linha in enumerate(txt_fim):
             txt = font.render(linha, True, BRANCO)
             screen.blit(txt, (400,300 + i * 50))
@@ -326,7 +360,7 @@ def get_vertex_clicked(mouse_pos):
     # Verifica se o clique está próximo de algum vértice (raio de 15px)
     for i, pos in enumerate(vertex_positions):
         dist = (mouse_pos[0] - pos[0]) ** 2 + (mouse_pos[1] - pos[1]) ** 2
-        if dist <= 15 ** 2:
+        if dist <= 20 ** 2:
             return i
     return None
 
@@ -368,8 +402,8 @@ def get_middle_vertex(a, b):
 aguardando_movimento_ia = False
 tempo_inicio_espera = 0
 
-def adugo_run():
-    global selected, turno, fim_de_jogo, vencedor, aguardando_movimento_ia, tempo_inicio_espera, nos_visitados
+def adugo_run(profundidade):
+    global selected, turno, fim_de_jogo, vencedor, aguardando_movimento_ia, tempo_inicio_espera, nos_visitados, cont_turno
 
     while True:
         for event in pygame.event.get():
@@ -378,6 +412,7 @@ def adugo_run():
                 sys.exit()
 
             elif event.type == pygame.MOUSEBUTTONDOWN and not fim_de_jogo and turno == 1:  # Turno Manual cachorros
+                
                 idx = get_vertex_clicked(pygame.mouse.get_pos())
                 if idx is not None:
                     if selected is None:
@@ -385,11 +420,11 @@ def adugo_run():
                             selected = idx
                     else:
                         if move_piece(selected, idx):
+                            cont_turno +=1
                             resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
                             if resultado in ["Vitória da Onça", "Vitória dos Cachorros"]:
                                 fim_de_jogo = True
                                 vencedor = resultado
-                                return "menu"
                             if not fim_de_jogo:
                                 turno = -1  # Troca para a Onça
                                 aguardando_movimento_ia = False  # Reinicia delay da IA
@@ -402,12 +437,13 @@ def adugo_run():
 
         # Movimento automático da Onça (jogada da IA)
         if turno == -1 and not fim_de_jogo:
+            
             if not aguardando_movimento_ia:
                 tempo_inicio_espera = pygame.time.get_ticks()
                 aguardando_movimento_ia = True
             elif pygame.time.get_ticks() - tempo_inicio_espera >= 500:  # Tempo de delay
                 inicio = time.time()
-                valor, melhor_jogada = minimax(estado_do_jogo, maximizador=True, profundidade=2)
+                valor, melhor_jogada = minimax(estado_do_jogo, True, profundidade)
                 fim = time.time()
 
                 print(f"Tempo de execução: {fim - inicio:.4f} segundos")
@@ -419,6 +455,7 @@ def adugo_run():
                 destino = melhor_jogada.index(-1)
                 origem = estado_do_jogo.index(-1)
                 move_piece(origem, destino)
+                cont_turno +=1
 
                 resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
                 if resultado in ["Vitória da Onça", "Vitória dos Cachorros"]:
@@ -436,4 +473,4 @@ def adugo_run():
 
 
 if __name__ == "__main__":
-    adugo_run()
+    adugo_run(profundidade=2)
