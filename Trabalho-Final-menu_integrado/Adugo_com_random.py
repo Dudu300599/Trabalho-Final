@@ -1,4 +1,5 @@
 import pygame
+from datetime import datetime
 import numpy as np
 import sys
 import time
@@ -293,7 +294,7 @@ def gerar_estados_futuros_onca(estado_atual):
         nova_estado[posicao_destino] = -1
 
         filhos.append(nova_estado)
-    print("Jogadas possíveis da onça:", len(filhos))
+    #print("Jogadas possíveis da onça:", len(filhos))
 
 
     return filhos
@@ -317,6 +318,24 @@ def gerar_estados_futuros_cachorros(estado_atual):
 
     return filhos
 
+
+def falta_de_combatividade(turnos_jogador):
+    """
+    Detecta empate por falta de combatividade.
+    
+    :param turnos_jogador: Lista onde cada elemento representa o conjunto de posições 
+                           ocupadas pelo jogador em um turno (ex: [{10}, {11}, {10}, ...])
+    :return: True se houve falta de combatividade, False caso contrário.
+    """
+    C = set()
+    p = 0
+
+    for movimento in turnos_jogador:
+        if movimento in C:
+            p += 1  # Movimento exato repetido
+        else:
+            C.add(movimento)
+    return p >= len(C) / 2
 
 #Função minimax retorna a melhor jogada com base na função objetiva
 #Tem como entrada o estado atual do jogo, um booleano para identificar qual jogador será maximizado e a profundidade da árvore gerada.
@@ -345,7 +364,7 @@ def minimax(estado_atual, maximizador, profundidade, func_utilidade, alpha=float
                 break  # poda beta
 
         melhor_estado = random.choice(melhores_estados)
-        print(f"Valor: {maior_avaliacao}, Melhor Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
+        #print(f"Valor: {maior_avaliacao}, Melhor Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
         return maior_avaliacao, melhor_estado
 
     else:
@@ -364,7 +383,7 @@ def minimax(estado_atual, maximizador, profundidade, func_utilidade, alpha=float
                 break  # poda alfa
 
         melhor_estado = random.choice(melhores_estados)
-        print(f"Valor: {menor_avaliacao}, Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
+        #print(f"Valor: {menor_avaliacao}, Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
         return menor_avaliacao, melhor_estado
 
 
@@ -396,7 +415,7 @@ def minimax_cachorro(estado_atual, maximizador, profundidade, func_utilidade, al
                 break  # poda beta
 
         melhor_estado = random.choice(melhores_estados)
-        print(f"Valor: {maior_avaliacao}, Melhor Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
+        #print(f"Valor: {maior_avaliacao}, Melhor Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
         return maior_avaliacao, melhor_estado
 
     else:
@@ -415,7 +434,7 @@ def minimax_cachorro(estado_atual, maximizador, profundidade, func_utilidade, al
                 break  # poda alfa
 
         melhor_estado = random.choice(melhores_estados)
-        print(f"Valor: {menor_avaliacao}, Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
+        #print(f"Valor: {menor_avaliacao}, Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
         return menor_avaliacao, melhor_estado
 
 def draw_board():
@@ -473,10 +492,36 @@ def draw_board():
             "Pressione ESC para voltar ao menu inicial"
         ]
 
+        txt_nao_concluida = [
+            f"FIM DE JOGO! {vencedor},",
+            f"Depois de {cont_turno} turnos",
+            "Pressione ESC para voltar ao menu inicial"
+        ]
+
+        txt_falta_combatividade_onca = [
+            f"FIM DE JOGO! {vencedor},",
+            f"Depois de {cont_turno} turnos",
+            "Pressione ESC para voltar ao menu inicial"
+        ]
+        
+        txt_falta_combatividade_cachorro = [
+            f"FIM DE JOGO! {vencedor},",
+            f"Depois de {cont_turno} turnos",
+            "Pressione ESC para voltar ao menu inicial"
+        ]
+
+
+
         if vencedor == "Vitória da Onça":
             txt_fim = txt_fim_onca
         elif vencedor == "Vitória dos Cachorros":
             txt_fim = txt_fim_cachorros
+        elif vencedor == "Partida não concluída":
+            txt_fim = txt_nao_concluida
+        elif vencedor == "Combatividade (Onça)":
+            txt_fim = txt_falta_combatividade_onca
+        elif vencedor == "Combatividade (Cachorro)":
+            txt_fim = txt_falta_combatividade_cachorro
 
         for i, linha in enumerate(txt_fim):
             txt = font.render(linha, True, BRANCO)
@@ -699,7 +744,7 @@ def adugo_run_player_vs_cachorros(profundidade):
         clock.tick(60)  # Limita para 60 FPS
 
 
-
+num_teste = 99
 def adugo_run_ia_vs_ia(
     profundidade_onca,
     profundidade_cachorros,
@@ -710,7 +755,17 @@ def adugo_run_ia_vs_ia(
     global aguardando_movimento_ia, tempo_inicio_espera, nos_visitados, cont_turno
     global estado_do_jogo, clock
     global capturados
+    global num_teste
 
+    # Históricos para detectar falta de combatividade
+    historico_onca = []
+    historico_cachorros = []
+
+    cont_vitoria_onca = 0
+    cont_vitoria_cachorro = 0
+    empate = 0
+    combatividade_onca = 0
+    combatividade_cachorro = 0
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -726,6 +781,8 @@ def adugo_run_ia_vs_ia(
                     capturados = 0
                     nos_visitados = 0
                     cont_turno = 0
+                    historico_onca = []
+                    historico_cachorros = []
                     return "menu"
 
         if not fim_de_jogo:
@@ -767,7 +824,7 @@ def adugo_run_ia_vs_ia(
                 print(f"Nós visitados: {nos_visitados}")
                 nos_visitados = 0
 
-                pygame.time.delay(1000)
+                #pygame.time.delay(1000)
 
                 try:
                     # Esta é a parte corrigida para encontrar a origem e o destino
@@ -790,18 +847,77 @@ def adugo_run_ia_vs_ia(
 
                 move_piece(origem, destino)
                 cont_turno += 1
+                
+                if turno == -1:
+                    historico_onca.append((origem,destino))
+                    print(historico_onca)
+                else:
+                    historico_cachorros.append((origem,destino))
+                    print(historico_cachorros)
+
 
                 resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
-                if resultado in ["Vitória da Onça", "Vitória dos Cachorros"]:
+                 # Empate por falta de combatividade
+                if turno == -1 and falta_de_combatividade(historico_onca):
                     fim_de_jogo = True
-                    vencedor = resultado
-                    print(f"Fim de jogo: {vencedor}")
-                
+                    empate = empate + 1
+                    combatividade_onca = combatividade_onca + 1 
+                    vencedor = "Combatividade (Onça)"
+                elif turno == 1 and falta_de_combatividade(historico_cachorros):
+                    fim_de_jogo = True
+                    empate = empate + 1
+                    combatividade_cachorro = combatividade_cachorro + 1 
+                    vencedor = "Combatividade (Cachorros)"
+                # Vitória normal ou limite de turnos
+                elif resultado in ["Vitória da Onça", "Vitória dos Cachorros"] or cont_turno >= 25:
+                    fim_de_jogo = True
+                    if cont_turno >= 25 and resultado not in ["Vitória da Onça", "Vitória dos Cachorros"]:
+                        empate = empate + 1
+                        vencedor = "Partida não concluída"
+                    elif resultado == "Vitória da Onça":
+                        cont_vitoria_onca = cont_vitoria_onca + 1
+                        vencedor = resultado
+                    elif resultado == "Vitória dos Cachorros":
+                        cont_vitoria_cachorro = cont_vitoria_cachorro + 1
+                        vencedor = resultado
 
+                if fim_de_jogo:
+                    print(f"Fim de jogo: {vencedor}")
+                    data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    try:
+                        with open("logs_ia_vs_ia.txt", "a", encoding="utf-8") as f:
+                            f.write(f"{data_hora} | Turnos: {cont_turno} | Resultado: {vencedor} | Profundidade: {profundidade} |"
+                            f"Função Onça: {utilidade_onca_func.__name__} | "
+                            f"Função Cachorro: {utilidade_cachorros_func.__name__}\n")
+                            if(num_teste>0): #LOOP para testar 100x
+                                num_teste = num_teste - 1
+                                estado_do_jogo = inicializacao()
+                                fim_de_jogo = False
+                                vencedor = None 
+                                selected = None
+                                turno = 1  # Onça começa
+                                capturados = 0
+                                nos_visitados = 0
+                                cont_turno = 0
+                                historico_onca = []
+                                historico_cachorros = []
+                            else:
+                                # Ao fim dos testes, grava o resumo total
+                                f.write("\n===== RESUMO FINAL =====\n")
+                                f.write(f"Vitórias Onça: {cont_vitoria_onca}\n")
+                                f.write(f"Vitórias Cachorros: {cont_vitoria_cachorro}\n")
+                                f.write(f"Partidas não concluidas: {empate}\n")
+                                f.write(f"Falta de Combatividade dos Cachorros: {combatividade_cachorro}\n")
+                                f.write(f"Falta de Combatividade da Onça: {combatividade_onca}\n")
+                                f.write("========================\n\n")
+
+                    except Exception as e:
+                        print(f"Erro ao salvar resultado: {e}")
 
                 turno *= -1
                 selected = None
                 aguardando_movimento_ia = False
+
                
 
         draw_board()
