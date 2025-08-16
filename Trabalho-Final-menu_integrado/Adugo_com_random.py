@@ -570,6 +570,7 @@ tempo_inicio_espera = 0
 
 def adugo_run_player_vs_onca(profundidade):
     global selected, turno, fim_de_jogo, vencedor, aguardando_movimento_ia, tempo_inicio_espera, nos_visitados, cont_turno, capturados
+    global estado_do_jogo
 
     while True:
         for event in pygame.event.get():
@@ -652,6 +653,7 @@ if __name__ == "__main__":
 
 def adugo_run_player_vs_cachorros(profundidade):
     global selected, turno, fim_de_jogo, vencedor, aguardando_movimento_ia, tempo_inicio_espera, nos_visitados, cont_turno, capturados
+    global estado_do_jogo
 
     while True:
         for event in pygame.event.get():
