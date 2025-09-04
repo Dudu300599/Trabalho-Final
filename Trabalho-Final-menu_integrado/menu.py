@@ -15,6 +15,7 @@ class Recursos:
     def __init__(self):
         self.font = pygame.font.Font("EldesCordel-Demo.otf", 60)
         self.font_pequena = pygame.font.Font("EldesCordel-Demo.otf", 45)
+        self.font_creditos = pygame.font.Font("EldesCordel-Demo.otf", 35)
         self.fonte_grande = pygame.font.Font("EldesCordel-Demo.otf", 90)
         self.font_dropdown = pygame.font.SysFont(None, 28)
         self.font_sys = pygame.font.SysFont(None, 40)
@@ -45,7 +46,7 @@ class MenuPrincipal(Tela):
         screen.blit(self.recursos.fundo_menu, (0, 0))
         screen.blit(self.recursos.logo, (325, 0))
         self.botoes = []
-        opcoes = ["Jogar", "Regras", "Recordes", "Creditos"]
+        opcoes = ["Jogar", "Regras", "Creditos"]
         mouse = pygame.mouse.get_pos()
         for i, texto in enumerate(opcoes):
             rect = self.recursos.font.render(texto, True, CREME).get_rect(center=(625, 350 + i * 80))
@@ -64,8 +65,6 @@ class MenuPrincipal(Tela):
                             self.jogo.mudar_estado(MenuJogar(self.jogo))
                         elif texto == "Regras":
                             self.jogo.mudar_estado(TelaRegras(self.jogo))
-                        elif texto == "Recordes":
-                            self.jogo.mudar_estado(TelaRecordes(self.jogo))
                         elif texto == "Creditos":
                             self.jogo.mudar_estado(TelaCreditos(self.jogo))
 
@@ -191,7 +190,7 @@ class MenuSelecaoCompvsComp(Tela):
         self.utilidade_cachorro = "utilidade_cachorro_0"
 
         # Botão iniciar jogo
-        self.botao_iniciar_rect = pygame.Rect(600, 650, 150, 50)
+        self.botao_iniciar_rect = pygame.Rect(550, 620, 150, 50)
 
     def desenhar(self):
         screen = self.jogo.screen
@@ -244,7 +243,7 @@ class MenuSelecaoCompvsComp(Tela):
             self.retangulos_cachorro.append((nome_func, rect))
 
         # Input de profundidade
-        anchor_x, anchor_y = 900, 550
+        anchor_x, anchor_y = 800, 535
         input_w, input_h = 120, 40
         gap = 10
         self.input_rect = pygame.Rect(anchor_x, anchor_y, input_w, input_h)
@@ -375,23 +374,11 @@ class TelaRegras(Tela):
         txt = pygame.font.Font("EldesCordel-Demo.otf", 24).render("Pressione ESC para voltar ao menu", True, LARANJA)
         self.jogo.screen.blit(txt, (650, 570))
 
-class TelaRecordes(Tela):
-    def desenhar(self):
-        self.jogo.screen.fill(PRETO)
-        linhas = [
-            "Recordes:",
-            "Jogador1 - 3 vitórias",
-            "Jogador2 - 2 vitórias",
-            "Jogador3 - 1 vitória",
-            "Pressione ESC para voltar ao menu."
-        ]
-        for i, linha in enumerate(linhas):
-            txt = self.recursos.font_sys.render(linha, True, BRANCO)
-            self.jogo.screen.blit(txt, (50, 100 + i * 50))
-
 class TelaCreditos(Tela):
     def desenhar(self):
-        self.jogo.screen.fill(PRETO)
+        screen = self.jogo.screen
+        screen.blit(self.recursos.fundo_menu, (0, 0))
+        screen.blit(self.recursos.logo, (325, 0))
         linhas = [
             "Desenvolvido por:",
             "Carlos Eduardo da Silva Santos e Willian Gomes",
@@ -400,8 +387,8 @@ class TelaCreditos(Tela):
             "Pressione ESC para voltar ao menu"
         ]
         for i, linha in enumerate(linhas):
-            txt = self.recursos.font_sys.render(linha, True, BRANCO)
-            self.jogo.screen.blit(txt, (50, 100 + i * 50))
+            txt = self.recursos.font_creditos.render(linha, True, CREME)
+            self.jogo.screen.blit(txt, (225, 250 + i * 80))
 
 class Jogo:
     def __init__(self):

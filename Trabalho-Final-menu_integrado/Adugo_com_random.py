@@ -227,18 +227,13 @@ def utilidade_cachorros_1(estado_atual): #função utilidade sugerida pelo artig
             # Verifica se tem um cachorro na casa i
             if estado_atual[i] == 1:
                 t += 1  # Um cachorro adjacente
-
-                # Verifica se ele pode ser capturado
-                diferenca = i - posicao_onca
-                destino = i + diferenca
-
                 pode_ser_capturado = False
-                if 0 <= destino < len(matriz_jogo):
-                    if (
-                        matriz_jogo[i][destino] == 1 and
-                        estado_atual[destino] == 0
-                    ):
+
+                for destino, meio in saltos_onca.get(posicao_onca, []):
+                # se o cachorro está na casa "meio" e o destino está livre, ele pode ser capturado
+                    if meio == i and estado_atual[destino] == 0:
                         pode_ser_capturado = True
+                        break
 
                 if not pode_ser_capturado:
                     p += 1  # Está protegido
@@ -648,9 +643,6 @@ def adugo_run_player_vs_onca(profundidade):
         clock.tick(60)  # Limita para 60 FPS
 
 
-if __name__ == "__main__":
-    adugo_run_player_vs_onca(profundidade=6)
-
 def adugo_run_player_vs_cachorros(profundidade):
     global selected, turno, fim_de_jogo, vencedor, aguardando_movimento_ia, tempo_inicio_espera, nos_visitados, cont_turno, capturados
     global estado_do_jogo
@@ -747,6 +739,8 @@ def adugo_run_player_vs_cachorros(profundidade):
 
 
 num_teste = 99
+
+
 def adugo_run_ia_vs_ia(
     profundidade_onca,
     profundidade_cachorros,
@@ -765,9 +759,12 @@ def adugo_run_ia_vs_ia(
 
     cont_vitoria_onca = 0
     cont_vitoria_cachorro = 0
+    med_turnos = 0
     empate = 0
     combatividade_onca = 0
     combatividade_cachorro = 0
+    with open("logs_ia_vs_ia.txt", "w", encoding="utf-8"):
+        pass  # só abre e fecha, apagando o conteúdo
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -871,9 +868,9 @@ def adugo_run_ia_vs_ia(
                     combatividade_cachorro = combatividade_cachorro + 1 
                     vencedor = "Combatividade (Cachorros)"
                 # Vitória normal ou limite de turnos
-                elif resultado in ["Vitória da Onça", "Vitória dos Cachorros"] or cont_turno >= 25:
+                elif resultado in ["Vitória da Onça", "Vitória dos Cachorros"] or cont_turno >= 99999:
                     fim_de_jogo = True
-                    if cont_turno >= 25 and resultado not in ["Vitória da Onça", "Vitória dos Cachorros"]:
+                    if cont_turno >= 99999 and resultado not in ["Vitória da Onça", "Vitória dos Cachorros"]:
                         empate = empate + 1
                         vencedor = "Partida não concluída"
                     elif resultado == "Vitória da Onça":
@@ -886,9 +883,11 @@ def adugo_run_ia_vs_ia(
                 if fim_de_jogo:
                     print(f"Fim de jogo: {vencedor}")
                     data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    med_turnos += cont_turno
                     try:
                         with open("logs_ia_vs_ia.txt", "a", encoding="utf-8") as f:
-                            f.write(f"{data_hora} | Turnos: {cont_turno} | Resultado: {vencedor} | Profundidade: {profundidade} |"
+                            f.write(f"{data_hora} | Turnos: {cont_turno} | Resultado: {vencedor} | Profundidade: {profundidade} | "
+                            f"Cachorros Capturados: {capturados}/5 | " 
                             f"Função Onça: {utilidade_onca_func.__name__} | "
                             f"Função Cachorro: {utilidade_cachorros_func.__name__}\n")
                             if(num_teste>0): #LOOP para testar 100x
@@ -905,12 +904,14 @@ def adugo_run_ia_vs_ia(
                                 historico_cachorros = []
                             else:
                                 # Ao fim dos testes, grava o resumo total
+
                                 f.write("\n===== RESUMO FINAL =====\n")
                                 f.write(f"Vitórias Onça: {cont_vitoria_onca}\n")
                                 f.write(f"Vitórias Cachorros: {cont_vitoria_cachorro}\n")
                                 f.write(f"Partidas não concluidas: {empate}\n")
                                 f.write(f"Falta de Combatividade dos Cachorros: {combatividade_cachorro}\n")
                                 f.write(f"Falta de Combatividade da Onça: {combatividade_onca}\n")
+                                f.write(f"Nº médio de Turnos: {med_turnos/100}\n")
                                 f.write("========================\n\n")
 
                     except Exception as e:
@@ -926,3 +927,6 @@ def adugo_run_ia_vs_ia(
         pygame.display.flip()
         clock.tick(60)
 
+
+if __name__ == "__main__":
+    adugo_run_ia_vs_ia(5,5,utilidade_onca_0,utilidade_cachorros_2)
