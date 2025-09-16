@@ -1,5 +1,5 @@
 import pygame
-from Adugo_com_random import adugo_run_ia_vs_ia, adugo_run_player_vs_cachorros, adugo_run_player_vs_onca, utilidade_cachorros_0, utilidade_cachorros_1, utilidade_cachorros_2, utilidade_onca_0, utilidade_onca_1, utilidade_onca_2
+from Adugo_com_random import *
 
 pygame.init()
 
@@ -171,7 +171,8 @@ UTILIDADES = {
     "utilidade_onca_2": utilidade_onca_2,
     "utilidade_cachorro_0": utilidade_cachorros_0,
     "utilidade_cachorro_1": utilidade_cachorros_1,
-    "utilidade_cachorro_2": utilidade_cachorros_2
+    "utilidade_cachorro_2": utilidade_cachorros_2,
+    "utilidade_cachorro_3": utilidade_cachorros_3
 }
 
 
@@ -205,7 +206,8 @@ class MenuSelecaoCompvsComp(Tela):
         screen.blit(fonte.render("Onca", True, CREME), (300, 250))
         screen.blit(fonte.render("Cachorro", True, CREME), (700, 250))
 
-        opcoes_visuais = ["0", "1", "2"]
+        opcoes_visuais_onca = ["0", "1", "2"]
+        opcoes_visuais_cachorro = ["0","1","2","3"]
         self.retangulos_onca = []
         self.retangulos_cachorro = []
 
@@ -215,7 +217,7 @@ class MenuSelecaoCompvsComp(Tela):
         altura_celula = 40
 
         # Coluna Onça
-        for i, opcao in enumerate(opcoes_visuais):
+        for i, opcao in enumerate(opcoes_visuais_onca):
             y = altura_inicial + i * espacamento
             rect = pygame.Rect(320, y, largura_celula, altura_celula)
 
@@ -228,19 +230,33 @@ class MenuSelecaoCompvsComp(Tela):
 
             self.retangulos_onca.append((nome_func, rect))
 
-        # Coluna Cachorro
-        for i, opcao in enumerate(opcoes_visuais):
-            y = altura_inicial + i * espacamento
-            rect = pygame.Rect(780, y, largura_celula, altura_celula)
+        # Coluna Cachorro com layout automático
+        # Definimos a grade: cada sublista é uma linha
+        linhas_cachorro = [["0", "1"], ["2", "3"]]
 
-            nome_func = f"utilidade_cachorro_{opcao}"
-            cor = VERDE_CLARO if self.utilidade_cachorro == nome_func else CINZA
+        x_base = 780
+        y_base = altura_inicial
+        largura_celula = 100
+        altura_celula = 40
+        espacamento_h = 20  # espaçamento horizontal
+        espacamento_v = 50  # espaçamento vertical
 
-            pygame.draw.rect(screen, cor, rect, border_radius=5)
-            texto = fonte_celula.render(opcao, True, PRETO)
-            screen.blit(texto, texto.get_rect(center=rect.center))
+        self.retangulos_cachorro = []
 
-            self.retangulos_cachorro.append((nome_func, rect))
+        for row_idx, linha in enumerate(linhas_cachorro):
+            for col_idx, opcao in enumerate(linha):
+                x = x_base + col_idx * (largura_celula + espacamento_h)
+                y = y_base + row_idx * espacamento_v
+
+                rect = pygame.Rect(x, y, largura_celula, altura_celula)
+                nome_func = f"utilidade_cachorro_{opcao}"
+                cor = VERDE_CLARO if self.utilidade_cachorro == nome_func else CINZA
+
+                pygame.draw.rect(screen, cor, rect, border_radius=5)
+                texto = fonte_celula.render(opcao, True, PRETO)
+                screen.blit(texto, texto.get_rect(center=rect.center))
+
+                self.retangulos_cachorro.append((nome_func, rect))
 
         # Input de profundidade
         anchor_x, anchor_y = 800, 535

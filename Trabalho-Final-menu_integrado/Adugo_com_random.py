@@ -266,6 +266,20 @@ def utilidade_cachorros_2(estado_atual): #função utilidade sugerida pelo artig
     return max(-1000, min(1000, valor))
 
 
+def utilidade_cachorros_3(estado_atual): ## função que junta as duas funções do artigo com utilização de pesos
+
+    #valor das funções de utilidade
+    u1 = utilidade_cachorros_1(estado_atual)
+    u2 = utilidade_cachorros_2(estado_atual)
+
+    #pesos
+    w1 = 0.4 
+    w2 = 0.6
+
+    valor = w1 * u1 + w2 * u2
+    return int(max(-1000, min(1000, valor)))
+
+
 
 #Função que gera os estados os estados futuros da onça, tem como entrada o estado atual do tabuleiro
 #Retorna um vetor com todos os movimentos possiveis da onça a partir do estado atual
@@ -759,7 +773,7 @@ def adugo_run_ia_vs_ia(
 
     cont_vitoria_onca = 0
     cont_vitoria_cachorro = 0
-    med_turnos = 0
+    ##med_turnos = 0
     empate = 0
     combatividade_onca = 0
     combatividade_cachorro = 0
@@ -868,9 +882,9 @@ def adugo_run_ia_vs_ia(
                     combatividade_cachorro = combatividade_cachorro + 1 
                     vencedor = "Combatividade (Cachorros)"
                 # Vitória normal ou limite de turnos
-                elif resultado in ["Vitória da Onça", "Vitória dos Cachorros"] or cont_turno >= 99999:
+                elif resultado in ["Vitória da Onça", "Vitória dos Cachorros"] or cont_turno >= 110:
                     fim_de_jogo = True
-                    if cont_turno >= 99999 and resultado not in ["Vitória da Onça", "Vitória dos Cachorros"]:
+                    if cont_turno >= 110 and resultado not in ["Vitória da Onça", "Vitória dos Cachorros"]:
                         empate = empate + 1
                         vencedor = "Partida não concluída"
                     elif resultado == "Vitória da Onça":
@@ -883,7 +897,7 @@ def adugo_run_ia_vs_ia(
                 if fim_de_jogo:
                     print(f"Fim de jogo: {vencedor}")
                     data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                    med_turnos += cont_turno
+                    ##med_turnos += cont_turno
                     try:
                         with open("logs_ia_vs_ia.txt", "a", encoding="utf-8") as f:
                             f.write(f"{data_hora} | Turnos: {cont_turno} | Resultado: {vencedor} | Profundidade: {profundidade} | "
@@ -911,7 +925,7 @@ def adugo_run_ia_vs_ia(
                                 f.write(f"Partidas não concluidas: {empate}\n")
                                 f.write(f"Falta de Combatividade dos Cachorros: {combatividade_cachorro}\n")
                                 f.write(f"Falta de Combatividade da Onça: {combatividade_onca}\n")
-                                f.write(f"Nº médio de Turnos: {med_turnos/100}\n")
+                                ##f.write(f"Nº médio de Turnos: {med_turnos/100}\n")
                                 f.write("========================\n\n")
 
                     except Exception as e:
