@@ -273,8 +273,8 @@ def utilidade_cachorros_3(estado_atual): ## função que junta as duas funções
     u2 = utilidade_cachorros_2(estado_atual)
 
     #pesos
-    w1 = 0.4 
-    w2 = 0.6
+    w1 = 0.6 
+    w2 = 0.4
 
     valor = w1 * u1 + w2 * u2
     return int(max(-1000, min(1000, valor)))
@@ -753,6 +753,7 @@ def adugo_run_player_vs_cachorros(profundidade):
 
 
 num_teste = 99
+LIMITE_TURNOS = 110
 
 
 def adugo_run_ia_vs_ia(
@@ -882,9 +883,9 @@ def adugo_run_ia_vs_ia(
                     combatividade_cachorro = combatividade_cachorro + 1 
                     vencedor = "Combatividade (Cachorros)"
                 # Vitória normal ou limite de turnos
-                elif resultado in ["Vitória da Onça", "Vitória dos Cachorros"] or cont_turno >= 110:
+                elif resultado in ["Vitória da Onça", "Vitória dos Cachorros"] or cont_turno >= LIMITE_TURNOS:
                     fim_de_jogo = True
-                    if cont_turno >= 110 and resultado not in ["Vitória da Onça", "Vitória dos Cachorros"]:
+                    if cont_turno >= LIMITE_TURNOS and resultado not in ["Vitória da Onça", "Vitória dos Cachorros"]:
                         empate = empate + 1
                         vencedor = "Partida não concluída"
                     elif resultado == "Vitória da Onça":
