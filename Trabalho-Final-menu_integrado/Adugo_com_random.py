@@ -901,7 +901,8 @@ def adugo_run_ia_vs_ia(
                     ##med_turnos += cont_turno
                     try:
                         with open("logs_ia_vs_ia.txt", "a", encoding="utf-8") as f:
-                            f.write(f"{data_hora} | Turnos: {cont_turno} | Resultado: {vencedor} | Profundidade: {profundidade} | "
+                            f.write(f"{data_hora} | Turnos: {cont_turno} | Resultado: {vencedor} | Profundidade Onça: {profundidade_onca} | "
+                            f"Profundidade Cachorros: {profundidade_cachorros} |"
                             f"Cachorros Capturados: {capturados}/5 | " 
                             f"Função Onça: {utilidade_onca_func.__name__} | "
                             f"Função Cachorro: {utilidade_cachorros_func.__name__}\n")
