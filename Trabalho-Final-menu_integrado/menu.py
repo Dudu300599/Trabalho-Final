@@ -1,5 +1,5 @@
 import pygame
-from Adugo_com_random import adugo_run_ia_vs_ia, adugo_run_player_vs_cachorros, adugo_run_player_vs_onca, utilidade_cachorros_0, utilidade_cachorros_1, utilidade_cachorros_2, utilidade_onca_0, utilidade_onca_1, utilidade_onca_2
+from Adugo_com_random import *
 
 pygame.init()
 
@@ -15,6 +15,7 @@ class Recursos:
     def __init__(self):
         self.font = pygame.font.Font("EldesCordel-Demo.otf", 60)
         self.font_pequena = pygame.font.Font("EldesCordel-Demo.otf", 45)
+        self.font_creditos = pygame.font.Font("EldesCordel-Demo.otf", 35)
         self.fonte_grande = pygame.font.Font("EldesCordel-Demo.otf", 90)
         self.font_dropdown = pygame.font.SysFont(None, 28)
         self.font_sys = pygame.font.SysFont(None, 40)
@@ -45,7 +46,7 @@ class MenuPrincipal(Tela):
         screen.blit(self.recursos.fundo_menu, (0, 0))
         screen.blit(self.recursos.logo, (325, 0))
         self.botoes = []
-        opcoes = ["Jogar", "Regras", "Recordes", "Creditos"]
+        opcoes = ["Jogar", "Regras", "Creditos"]
         mouse = pygame.mouse.get_pos()
         for i, texto in enumerate(opcoes):
             rect = self.recursos.font.render(texto, True, CREME).get_rect(center=(625, 350 + i * 80))
@@ -64,8 +65,6 @@ class MenuPrincipal(Tela):
                             self.jogo.mudar_estado(MenuJogar(self.jogo))
                         elif texto == "Regras":
                             self.jogo.mudar_estado(TelaRegras(self.jogo))
-                        elif texto == "Recordes":
-                            self.jogo.mudar_estado(TelaRecordes(self.jogo))
                         elif texto == "Creditos":
                             self.jogo.mudar_estado(TelaCreditos(self.jogo))
 
@@ -172,7 +171,8 @@ UTILIDADES = {
     "utilidade_onca_2": utilidade_onca_2,
     "utilidade_cachorro_0": utilidade_cachorros_0,
     "utilidade_cachorro_1": utilidade_cachorros_1,
-    "utilidade_cachorro_2": utilidade_cachorros_2
+    "utilidade_cachorro_2": utilidade_cachorros_2,
+    "utilidade_cachorro_3": utilidade_cachorros_3
 }
 
 
@@ -186,12 +186,20 @@ class MenuSelecaoCompvsComp(Tela):
         self.profundidade = 1
         self.erro = ""
 
+        #Profundidade Onça
+        self.input_onca_text = "1"
+        self.input_onca_rect = pygame.Rect(450,535,120,40)
+        self.active_onca = False
+
+        #Profundidade Cachorros
+        self.input_cachorro_text = "1"
+        self.input_cachorro_rect = pygame.Rect(1130,535,120,40)
+        self.active_cachorro = False
+
         # Estado das seleções das funções de utilidade (nomes REAIS)
         self.utilidade_onca = "utilidade_onca_0"
         self.utilidade_cachorro = "utilidade_cachorro_0"
 
-        # Botão iniciar jogo
-        self.botao_iniciar_rect = pygame.Rect(600, 650, 150, 50)
 
     def desenhar(self):
         screen = self.jogo.screen
@@ -203,167 +211,178 @@ class MenuSelecaoCompvsComp(Tela):
         fonte_celula = self.recursos.font_dropdown
 
         # Títulos
-        screen.blit(fonte.render("Onca", True, CREME), (300, 250))
-        screen.blit(fonte.render("Cachorro", True, CREME), (700, 250))
+        screen.blit(fonte.render("Onca", True, CREME), (256, 250))
+        screen.blit(fonte.render("Cachorro", True, CREME), (800, 250))
 
-        opcoes_visuais = ["0", "1", "2"]
+
         self.retangulos_onca = []
         self.retangulos_cachorro = []
 
         altura_inicial = 350
-        espacamento = 50
+        espacamento_h = 20  # espaçamento horizontal
+        espacamento_v = 50  # espaçamento vertical
         largura_celula = 100
         altura_celula = 40
 
+
         # Coluna Onça
-        for i, opcao in enumerate(opcoes_visuais):
-            y = altura_inicial + i * espacamento
-            rect = pygame.Rect(320, y, largura_celula, altura_celula)
+        linhas_onca = [[0,1,2]]
+        x_onca = 150
 
-            nome_func = f"utilidade_onca_{opcao}"
-            cor = VERDE_CLARO if self.utilidade_onca == nome_func else CINZA
+        for linhas, linha in enumerate(linhas_onca):
+            for colunas, opcao in enumerate(linha):
+                x = x_onca + colunas * (largura_celula + espacamento_h)
+                y = altura_inicial + linhas * espacamento_v
 
-            pygame.draw.rect(screen, cor, rect, border_radius=5)
-            texto = fonte_celula.render(opcao, True, PRETO)
-            screen.blit(texto, texto.get_rect(center=rect.center))
+                rect = pygame.Rect(x,y,largura_celula,altura_celula)
+                nome_func = f"utilidade_onca_{opcao}"
+                cor = VERDE_CLARO if self.utilidade_onca == nome_func else CINZA
 
-            self.retangulos_onca.append((nome_func, rect))
+                pygame.draw.rect(screen, cor, rect, border_radius=5)
+                texto = fonte_celula.render(str(opcao), True, PRETO)
+                screen.blit(texto, texto.get_rect(center=rect.center))
 
-        # Coluna Cachorro
-        for i, opcao in enumerate(opcoes_visuais):
-            y = altura_inicial + i * espacamento
-            rect = pygame.Rect(780, y, largura_celula, altura_celula)
+                self.retangulos_onca.append((nome_func, rect))
 
-            nome_func = f"utilidade_cachorro_{opcao}"
-            cor = VERDE_CLARO if self.utilidade_cachorro == nome_func else CINZA
+        #Profundidade Onça
+        label_onca = fonte.render("Profunidade:", True, CREME)
+        label_onca_rect = label_onca.get_rect(centery=self.input_onca_rect.centery, right=self.input_onca_rect.left - 10)
+        screen.blit(label_onca, label_onca_rect)
 
-            pygame.draw.rect(screen, cor, rect, border_radius=5)
-            texto = fonte_celula.render(opcao, True, PRETO)
-            screen.blit(texto, texto.get_rect(center=rect.center))
+        pygame.draw.rect(screen, VERDE_CLARO if self.active_onca else CINZA, self.input_onca_rect, border_radius=5)
+        txt_onca = fonte_celula.render(self.input_onca_text,True,PRETO)
+        screen.blit(txt_onca, txt_onca.get_rect(center=self.input_onca_rect.center))
 
-            self.retangulos_cachorro.append((nome_func, rect))
 
-        # Input de profundidade
-        anchor_x, anchor_y = 900, 550
-        input_w, input_h = 120, 40
-        gap = 10
-        self.input_rect = pygame.Rect(anchor_x, anchor_y, input_w, input_h)
+        #divisoria 
+        pygame.draw.line(
+            screen,        # superfície
+            CREME,         # cor da linha
+            (640, 250),    # ponto inicial (x, y) em cima
+            (640, 600),    # ponto final (x, y) embaixo
+            3              # espessura da linha
+        )
 
-        label = fonte.render("Profundidade:", True, CREME)
-        label_rect = label.get_rect(centery=self.input_rect.centery, right=self.input_rect.left - gap)
-        screen.blit(label, label_rect)
 
-        pygame.draw.rect(screen, VERDE_CLARO if self.active else CINZA, self.input_rect, border_radius=5)
-        txt_surface = fonte_celula.render(self.text, True, PRETO)
-        screen.blit(txt_surface, txt_surface.get_rect(center=self.input_rect.center))
+        # Coluna Cachorro com layout automático
+        # Definimos a grade: cada sublista é uma linha
+        linhas_cachorro = [["0", "1"], ["2", "3"]]
 
-        # Botão iniciar
-        botao_texto = fonte.render("Iniciar Jogo", True, VERDE_CLARO if self.botao_iniciar_rect.collidepoint(mouse) else CREME)
-        screen.blit(botao_texto, botao_texto.get_rect(center=self.botao_iniciar_rect.center))
+        x_base = 830
+        y_base = altura_inicial
+        largura_celula = 100
+        altura_celula = 40
+        espacamento_h = 20  # espaçamento horizontal
+        espacamento_v = 50  # espaçamento vertical
 
-        # Erro
+        self.retangulos_cachorro = []
+
+        for row_idx, linha in enumerate(linhas_cachorro):
+            for col_idx, opcao in enumerate(linha):
+                x = x_base + col_idx * (largura_celula + espacamento_h)
+                y = y_base + row_idx * espacamento_v
+
+                rect = pygame.Rect(x, y, largura_celula, altura_celula)
+                nome_func = f"utilidade_cachorro_{opcao}"
+                cor = VERDE_CLARO if self.utilidade_cachorro == nome_func else CINZA
+
+                pygame.draw.rect(screen, cor, rect, border_radius=5)
+                texto = fonte_celula.render(opcao, True, PRETO)
+                screen.blit(texto, texto.get_rect(center=rect.center))
+
+                self.retangulos_cachorro.append((nome_func, rect))
+
+        #Profundidade Cachorro
+        label_cachorro = fonte.render("Profundidade:", True, CREME)
+        label_cachorro_rect = label_cachorro.get_rect(centery=self.input_cachorro_rect.centery, right=self.input_cachorro_rect.left - 10)
+        screen.blit(label_cachorro, label_cachorro_rect)
+
+        pygame.draw.rect(screen, VERDE_CLARO if self.active_cachorro else CINZA, self.input_cachorro_rect, border_radius=5)
+        txt_cachorro = fonte_celula.render(self.input_cachorro_text,True,PRETO)
+        screen.blit(txt_cachorro, txt_cachorro.get_rect(center=self.input_cachorro_rect.center))
+
+
+        # Botão iniciar jogo
+        label = "Iniciar Jogo"
+        botao_surface = fonte.render(label, True, CREME)
+
+        self.botao_iniciar_rect = botao_surface.get_rect(center=(625,660))
+
+        cor = VERDE_CLARO if self.botao_iniciar_rect.collidepoint(mouse) else CREME
+        botao_surface = fonte.render(label, True, cor)
+        
+        screen.blit(botao_surface, self.botao_iniciar_rect)
+        
+
+        # Erro onca
         if self.erro:
             erro_render = fonte_celula.render(self.erro, True, LARANJA)
-            screen.blit(erro_render, (self.input_rect.x - 300, self.input_rect.y + 50))
+            screen.blit(erro_render, (self.input_onca_rect.x - 300, self.input_onca_rect.y + 50))
+
+        # Erro cachorro
+        if self.erro:
+            erro_render = fonte_celula.render(self.erro, True, LARANJA)
+            screen.blit(erro_render, (self.input_cachorro_rect.x - 300, self.input_cachorro_rect.y + 50))
 
     def eventos(self, eventos):
         super().eventos(eventos)
 
         for event in eventos:
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.input_rect.collidepoint(event.pos):
-                    self.active = True
+                # Ativar campo da Onça
+                if self.input_onca_rect.collidepoint(event.pos):
+                    self.active_onca = True
+                    self.active_cachorro = False
+                # Ativar campo dos Cachorros
+                elif self.input_cachorro_rect.collidepoint(event.pos):
+                    self.active_cachorro = True
+                    self.active_onca = False
                 else:
-                    self.active = False
+                    self.active_onca = False
+                    self.active_cachorro = False
 
+                # Seleção de função de utilidade Onça
                 for nome_func, rect in self.retangulos_onca:
                     if rect.collidepoint(event.pos):
                         self.utilidade_onca = nome_func
                         self.erro = ""
 
+                # Seleção de função de utilidade Cachorro
                 for nome_func, rect in self.retangulos_cachorro:
                     if rect.collidepoint(event.pos):
                         self.utilidade_cachorro = nome_func
                         self.erro = ""
 
-                if self.botao_iniciar_rect.collidepoint(event.pos):
-                    try:
-                        valor = int(self.text)
-                        if valor < 1:
-                            self.erro = "Profundidade menor que 1"
-                        else:
-                            self.profundidade = valor
-                            adugo_run_ia_vs_ia(
-                                profundidade_onca=valor,
-                                profundidade_cachorros=valor,
-                                utilidade_onca_func=UTILIDADES[self.utilidade_onca],
-                                utilidade_cachorros_func=UTILIDADES[self.utilidade_cachorro]
-                            )
-                    except ValueError:
-                        self.erro = "Valor inválido"
-
-            elif event.type == pygame.KEYDOWN and self.active:
-                if event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]
-                    self.erro = ""
-                elif event.unicode.isdigit():
-                    novo_texto = self.text + event.unicode
-                    if len(novo_texto) <= 2 and 1 <= int(novo_texto) <= 20:
-                        self.text = novo_texto
-
-
-
-
-    def eventos(self, eventos):
-        super().eventos(eventos)
-
-        for event in eventos:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.input_rect.collidepoint(event.pos):
-                    self.active = True
-                else:
-                    self.active = False
-
-                # Clicar nas células da Onça
-                for opcao, rect in self.retangulos_onca:
-                    if rect.collidepoint(event.pos):
-                        self.utilidade_onca = opcao
-                        self.erro = ""
-
-                # Clicar nas células do Cachorro
-                for opcao, rect in self.retangulos_cachorro:
-                    if rect.collidepoint(event.pos):
-                        self.utilidade_cachorro = opcao
-                        self.erro = ""
-
                 # Botão iniciar jogo
                 if self.botao_iniciar_rect.collidepoint(event.pos):
                     try:
-                        valor = int(self.text)
-                        if valor < 1:
+                        valor_onca = int(self.input_onca_text)
+                        valor_cachorro = int(self.input_cachorro_text)
+                        if valor_onca < 1 or valor_cachorro < 1:
                             self.erro = "Profundidade menor que 1"
                         else:
-                            self.profundidade = valor
                             adugo_run_ia_vs_ia(
-                                profundidade_onca=int(self.text),
-                                profundidade_cachorros=int(self.text),
-                                utilidade_onca_func = UTILIDADES[self.utilidade_onca],
-                                utilidade_cachorros_func = UTILIDADES[self.utilidade_cachorro],
+                                profundidade_onca=valor_onca,
+                                profundidade_cachorros=valor_cachorro,
+                                utilidade_onca_func=UTILIDADES[self.utilidade_onca],
+                                utilidade_cachorros_func=UTILIDADES[self.utilidade_cachorro],
                             )
-
-
                     except ValueError:
                         self.erro = "Valor inválido"
 
-            elif event.type == pygame.KEYDOWN and self.active:
-                if event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]
-                    self.erro = ""
-                elif event.unicode.isdigit():
-                    novo_texto = self.text + event.unicode
-                    if len(novo_texto) <= 2:
-                        if 1 <= int(novo_texto) <= 20:
-                            self.text = novo_texto
+            elif event.type == pygame.KEYDOWN:
+                if self.active_onca:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.input_onca_text = self.input_onca_text[:-1]
+                    elif event.unicode.isdigit() and len(self.input_onca_text) < 2:
+                        self.input_onca_text += event.unicode
+
+                elif self.active_cachorro:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.input_cachorro_text = self.input_cachorro_text[:-1]
+                    elif event.unicode.isdigit() and len(self.input_cachorro_text) < 2:
+                        self.input_cachorro_text += event.unicode
+
 
 
 
@@ -375,23 +394,11 @@ class TelaRegras(Tela):
         txt = pygame.font.Font("EldesCordel-Demo.otf", 24).render("Pressione ESC para voltar ao menu", True, LARANJA)
         self.jogo.screen.blit(txt, (650, 570))
 
-class TelaRecordes(Tela):
-    def desenhar(self):
-        self.jogo.screen.fill(PRETO)
-        linhas = [
-            "Recordes:",
-            "Jogador1 - 3 vitórias",
-            "Jogador2 - 2 vitórias",
-            "Jogador3 - 1 vitória",
-            "Pressione ESC para voltar ao menu."
-        ]
-        for i, linha in enumerate(linhas):
-            txt = self.recursos.font_sys.render(linha, True, BRANCO)
-            self.jogo.screen.blit(txt, (50, 100 + i * 50))
-
 class TelaCreditos(Tela):
     def desenhar(self):
-        self.jogo.screen.fill(PRETO)
+        screen = self.jogo.screen
+        screen.blit(self.recursos.fundo_menu, (0, 0))
+        screen.blit(self.recursos.logo, (325, 0))
         linhas = [
             "Desenvolvido por:",
             "Carlos Eduardo da Silva Santos e Willian Gomes",
@@ -400,8 +407,8 @@ class TelaCreditos(Tela):
             "Pressione ESC para voltar ao menu"
         ]
         for i, linha in enumerate(linhas):
-            txt = self.recursos.font_sys.render(linha, True, BRANCO)
-            self.jogo.screen.blit(txt, (50, 100 + i * 50))
+            txt = self.recursos.font_creditos.render(linha, True, CREME)
+            self.jogo.screen.blit(txt, (225, 250 + i * 80))
 
 class Jogo:
     def __init__(self):
