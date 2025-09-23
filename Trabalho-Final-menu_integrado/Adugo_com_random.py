@@ -6,6 +6,7 @@ import time
 import random
 import os
 from collections import deque
+import copy
 
 #MATRIZ DE ADJACÊNCIA
 matriz_jogo = np.array([[0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -925,7 +926,7 @@ def adugo_run_ia_vs_ia(
                     historico_cachorros.append((origem,destino))
 
                 nos_visitados = 0
-                import copy
+           
                 move_piece(origem, destino)
                 historico_estados_jogo.append(copy.deepcopy(estado_do_jogo))
                 print(historico_estados_jogo)
