@@ -349,20 +349,23 @@ def falta_de_combatividade(turnos_jogador):
 
 #Função minimax retorna a melhor jogada com base na função objetiva
 #Tem como entrada o estado atual do jogo, um booleano para identificar qual jogador será maximizado e a profundidade da árvore gerada.
-def minimax(estado_atual, maximizador, profundidade, func_utilidade, alpha=float('-inf'), beta=float('inf')):
+def minimax_onca(estado_atual, maximizador, profundidade, func_utilidade_c, func_utilidade_o, alpha=float('-inf'), beta=float('inf')):
     global nos_visitados
     nos_visitados += 1
 
     # Checar condição de parada (profundidade ou vitória)
     if profundidade == 0 or condicao_vitoria(estado_atual.index(-1), estado_atual) in ["Vitória dos Cachorros", "Vitória da Onça"]:
-        utilidade = func_utilidade(estado_atual)
+        if maximizador:
+            utilidade = func_utilidade_o(estado_atual)
+        else:
+            utilidade = func_utilidade_c(estado_atual)
         return utilidade, estado_atual
 
     if maximizador:
         maior_avaliacao = float('-inf')
         melhores_estados = []
         for filho in gerar_estados_futuros_onca(estado_atual):
-            avaliacao, _ = minimax(filho, False, profundidade - 1, func_utilidade, alpha, beta)
+            avaliacao, _ = minimax_onca(filho, False, profundidade - 1, func_utilidade_c, func_utilidade_o, alpha, beta)
             if avaliacao > maior_avaliacao:
                 maior_avaliacao = avaliacao
                 melhores_estados = [filho]
@@ -381,7 +384,7 @@ def minimax(estado_atual, maximizador, profundidade, func_utilidade, alpha=float
         menor_avaliacao = float('inf')
         melhores_estados = []
         for filho in gerar_estados_futuros_cachorros(estado_atual):
-            avaliacao, _ = minimax(filho, True, profundidade - 1, func_utilidade, alpha, beta)
+            avaliacao, _ = minimax_onca(filho, True, profundidade - 1, func_utilidade_c, func_utilidade_o, alpha, beta)
             if avaliacao < menor_avaliacao:
                 menor_avaliacao = avaliacao
                 melhores_estados = [filho]
@@ -400,7 +403,7 @@ def minimax(estado_atual, maximizador, profundidade, func_utilidade, alpha=float
 
 #Função minimax retorna a melhor jogada com base na função objetiva
 #Tem como entrada o estado atual do jogo, um booleano para identificar qual jogador será maximizado e a profundidade da árvore gerada.
-def minimax_cachorro(estado_atual, maximizador, profundidade, func_utilidade, alpha=float('-inf'), beta=float('inf')):
+def minimax_cachorro(estado_atual, maximizador, profundidade,func_utilidade_c, func_utilidade_o, alpha=float('-inf'), beta=float('inf')):
     global nos_visitados
     nos_visitados += 1
 
@@ -416,14 +419,18 @@ def minimax_cachorro(estado_atual, maximizador, profundidade, func_utilidade, al
     
     # Caso base: profundidade chegou a 0
     if profundidade == 0:
-        utilidade = func_utilidade(estado_atual)
+        if maximizador:
+            utilidade = func_utilidade_c(estado_atual)
+        else:
+            utilidade = func_utilidade_o(estado_atual)
         return utilidade, estado_atual
+
     
     if maximizador:
         maior_avaliacao = float('-inf')
         melhores_estados = []
         for filho in gerar_estados_futuros_cachorros(estado_atual):
-            avaliacao, _ = minimax_cachorro(filho, False, profundidade - 1, func_utilidade, alpha, beta)
+            avaliacao, _ = minimax_cachorro(filho, False, profundidade - 1, func_utilidade_c, func_utilidade_o, alpha, beta)
             if avaliacao > maior_avaliacao:
                 maior_avaliacao = avaliacao
                 melhores_estados = [filho]
@@ -442,7 +449,7 @@ def minimax_cachorro(estado_atual, maximizador, profundidade, func_utilidade, al
         menor_avaliacao = float('inf')
         melhores_estados = []
         for filho in gerar_estados_futuros_onca(estado_atual):
-            avaliacao, _ = minimax_cachorro(filho, True, profundidade - 1, func_utilidade, alpha, beta)
+            avaliacao, _ = minimax_cachorro(filho, True, profundidade - 1, func_utilidade_c, func_utilidade_o, alpha, beta)
             if avaliacao < menor_avaliacao:
                 menor_avaliacao = avaliacao
                 melhores_estados = [filho]
@@ -524,7 +531,6 @@ def draw_board():
 
     # Exibe a mensagem de Fim de jogo
     if fim_de_jogo:
-        screen.blit(fundo_jogo, (0,0))
 
         txt_fim_onca = [
                 f"FIM DE JOGO! {vencedor}",
@@ -573,7 +579,7 @@ def draw_board():
 
         for i, linha in enumerate(txt_fim):
             txt = font.render(linha, True, BRANCO)
-            screen.blit(txt, (400,300 + i * 50))
+            screen.blit(txt, (20,330 + i * 50))
 
 
 
@@ -589,6 +595,11 @@ def get_vertex_clicked(mouse_pos):
 #Função que executa o movimento das peças
 def move_piece(from_idx, to_idx):
     global capturados
+
+    # ADICIONE ESTAS LINHAS PARA DEPURAR
+    print(f"DEBUG: Tentando acessar matriz_jogo[{from_idx}][{to_idx}]")
+    print(f"DEBUG: Formato da matriz_jogo: {len(matriz_jogo)} linhas")
+    print(f"DEBUG: matriz_jogo completa: {matriz_jogo}")
 
     # Movimento normal
     if matriz_jogo[from_idx][to_idx] == 1 and estado_do_jogo[to_idx] == 0:
@@ -667,7 +678,7 @@ def adugo_run_player_vs_onca(profundidade):
                 aguardando_movimento_ia = True
             elif pygame.time.get_ticks() - tempo_inicio_espera >= 500:  # Tempo de delay
                 inicio = time.time()  
-                valor, melhor_jogada = minimax(estado_do_jogo, True, profundidade, utilidade_onca_2)
+                valor, melhor_jogada = minimax_onca(estado_do_jogo, True, profundidade, utilidade_cachorros_1, utilidade_onca_1)
                 fim = time.time()
 
                 print(f"Tempo de execução: {fim - inicio:.4f} segundos")
@@ -747,7 +758,7 @@ def adugo_run_player_vs_cachorros(profundidade):
             elif pygame.time.get_ticks() - tempo_inicio_espera >= 500:  # Tempo de delay
                 inicio = time.time()
                 # O minimax agora procura a melhor jogada para o jogador 1 (cachorros)
-                valor, melhor_jogada = minimax_cachorro(estado_do_jogo, True, profundidade, utilidade_cachorros_2)
+                valor, melhor_jogada = minimax_cachorro(estado_do_jogo, True, profundidade, utilidade_cachorros_1, utilidade_onca_1)
                 fim = time.time()
 
                 #print(f"Tempo de execução: {fim - inicio:.4f} segundos")
@@ -792,7 +803,7 @@ def adugo_run_player_vs_cachorros(profundidade):
 
 
 num_teste = 99
-LIMITE_TURNOS = 110
+LIMITE_TURNOS = 25
 
 
 def adugo_run_ia_vs_ia(
@@ -864,20 +875,57 @@ def adugo_run_ia_vs_ia(
                     valor = 0
                 else:
                     if turno == -1:
-                        valor, melhor_jogada = minimax(
-                            estado_do_jogo,
-                            maximizador = True,
-                            profundidade=profundidade,
-                            func_utilidade=func_utilidade
-                        )
+                        if utilidade_cachorros_func == utilidade_cachorros_0:
+                            valor, melhor_jogada = minimax_onca(
+                                estado_do_jogo,
+                                maximizador = True,
+                                profundidade=profundidade,
+                                func_utilidade_c= utilidade_cachorros_1,
+                                func_utilidade_o= utilidade_onca_func
+                            )
+                        elif utilidade_onca_func == utilidade_onca_0:
+                            valor, melhor_jogada = minimax_onca(
+                                estado_do_jogo,
+                                maximizador = True,
+                                profundidade=profundidade,
+                                func_utilidade_c= utilidade_cachorros_func,
+                                func_utilidade_o= utilidade_onca_1
+                            )
+                        else:
+                            print("prin entrei aqui crl")
+                            valor, melhor_jogada = minimax_onca(
+                                estado_do_jogo,
+                                maximizador = True,
+                                profundidade=profundidade,
+                                func_utilidade_c= utilidade_cachorros_func,
+                                func_utilidade_o= utilidade_onca_func
+                            )
                     else:
-                        valor, melhor_jogada = minimax_cachorro(
-                            estado_do_jogo,
-                            maximizador = True,
-                            profundidade=profundidade,
-                            func_utilidade=func_utilidade
-                        )
-                        
+                        if utilidade_cachorros_func == utilidade_cachorros_0:
+                            valor, melhor_jogada = minimax_cachorro(
+                                estado_do_jogo,
+                                maximizador = True,
+                                profundidade=profundidade,
+                                func_utilidade_c= utilidade_cachorros_1,
+                                func_utilidade_o= utilidade_onca_func
+                            )
+                        elif utilidade_onca_func == utilidade_onca_0:
+                            valor, melhor_jogada = minimax_cachorro(
+                                estado_do_jogo,
+                                maximizador = True,
+                                profundidade=profundidade,
+                                func_utilidade_c= utilidade_cachorros_func,
+                                func_utilidade_o= utilidade_onca_1
+                            )
+                        else:
+                            print("Entrei aqui")
+                            valor, melhor_jogada = minimax_cachorro(
+                                estado_do_jogo,
+                                maximizador = True,
+                                profundidade=profundidade,
+                                func_utilidade_c= utilidade_cachorros_func,
+                                func_utilidade_o= utilidade_onca_func
+                            )
 
                 fim = time.time()
                 #print(f"Tempo de execução: {fim - inicio:.4f} segundos")
@@ -930,7 +978,6 @@ def adugo_run_ia_vs_ia(
                 import copy
                 move_piece(origem, destino)
                 historico_estados_jogo.append(copy.deepcopy(estado_do_jogo))
-                print(historico_estados_jogo)
                 resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
                  # Empate por falta de combatividade
                 if turno == -1 and falta_de_combatividade(historico_onca):
