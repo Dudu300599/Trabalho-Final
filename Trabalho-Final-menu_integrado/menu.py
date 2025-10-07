@@ -172,7 +172,8 @@ UTILIDADES = {
     "utilidade_cachorro_0": utilidade_cachorros_0,
     "utilidade_cachorro_1": utilidade_cachorros_1,
     "utilidade_cachorro_2": utilidade_cachorros_2,
-    "utilidade_cachorro_3": utilidade_cachorros_3
+    "utilidade_cachorro_3": utilidade_cachorros_3,
+    "utilidade_cachorro_4": utilidade_cachorros_4,
 }
 
 
@@ -199,6 +200,11 @@ class MenuSelecaoCompvsComp(Tela):
         # Estado das seleções das funções de utilidade (nomes REAIS)
         self.utilidade_onca = "utilidade_onca_0"
         self.utilidade_cachorro = "utilidade_cachorro_0"
+
+        # NOVO: Campo para o número de simulações
+        self.input_simulacoes_text = "100"
+        self.input_simulacoes_rect = pygame.Rect(0, 0, 200, 40) # Posição será centralizada no desenhar
+        self.active_simulacoes = False
 
 
     def desenhar(self):
@@ -266,9 +272,9 @@ class MenuSelecaoCompvsComp(Tela):
 
         # Coluna Cachorro com layout automático
         # Definimos a grade: cada sublista é uma linha
-        linhas_cachorro = [["0", "1"], ["2", "3"]]
+        linhas_cachorro = [["0", "1","2"], ["3", "4"]]
 
-        x_base = 830
+        x_base = 750
         y_base = altura_inicial
         largura_celula = 100
         altura_celula = 40
@@ -301,6 +307,21 @@ class MenuSelecaoCompvsComp(Tela):
         txt_cachorro = fonte_celula.render(self.input_cachorro_text,True,PRETO)
         screen.blit(txt_cachorro, txt_cachorro.get_rect(center=self.input_cachorro_rect.center))
 
+        label_simulacoes = fonte.render("Nº de Partidas:", True, CREME)
+        label_sim_rect = label_simulacoes.get_rect(center=(screen.get_width() / 2, 590))
+        screen.blit(label_simulacoes, (label_sim_rect.x - 120, label_sim_rect.y))
+        
+        # NOVO: Desenhar campo de número de simulações
+        label_simulacoes = fonte.render("Nº de Partidas:", True, CREME)
+        label_sim_rect = label_simulacoes.get_rect(center=(screen.get_width() / 2, 590))
+        screen.blit(label_simulacoes, (label_sim_rect.x - 120, label_sim_rect.y))
+        
+        self.input_simulacoes_rect.centery = label_sim_rect.centery
+        self.input_simulacoes_rect.left = label_sim_rect.right - 100
+        cor_simulacoes = VERDE_CLARO if self.active_simulacoes else CINZA
+        pygame.draw.rect(screen, cor_simulacoes, self.input_simulacoes_rect, border_radius=5)
+        txt_simulacoes = fonte_celula.render(self.input_simulacoes_text, True, PRETO)
+        screen.blit(txt_simulacoes, txt_simulacoes.get_rect(center=self.input_simulacoes_rect.center))
 
         # Botão iniciar jogo
         label = "Iniciar Jogo"
@@ -337,6 +358,11 @@ class MenuSelecaoCompvsComp(Tela):
                 elif self.input_cachorro_rect.collidepoint(event.pos):
                     self.active_cachorro = True
                     self.active_onca = False
+
+                elif self.input_simulacoes_rect.collidepoint(event.pos):
+                    self.active_onca = False
+                    self.active_cachorro = False
+                    self.active_simulacoes = True
                 else:
                     self.active_onca = False
                     self.active_cachorro = False
@@ -358,10 +384,14 @@ class MenuSelecaoCompvsComp(Tela):
                     try:
                         valor_onca = int(self.input_onca_text)
                         valor_cachorro = int(self.input_cachorro_text)
+                        num_partidas = int(self.input_simulacoes_text)
                         if valor_onca < 1 or valor_cachorro < 1:
                             self.erro = "Profundidade menor que 1"
+                        elif num_partidas < 1: # NOVO: Validação
+                            self.erro = "Número de partidas deve ser maior que 0"
                         else:
                             adugo_run_ia_vs_ia(
+                                num_simulacoes = num_partidas-1,
                                 profundidade_onca=valor_onca,
                                 profundidade_cachorros=valor_cachorro,
                                 utilidade_onca_func=UTILIDADES[self.utilidade_onca],
@@ -382,6 +412,12 @@ class MenuSelecaoCompvsComp(Tela):
                         self.input_cachorro_text = self.input_cachorro_text[:-1]
                     elif event.unicode.isdigit() and len(self.input_cachorro_text) < 2:
                         self.input_cachorro_text += event.unicode
+
+                elif self.active_simulacoes:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.input_simulacoes_text = self.input_simulacoes_text[:-1]
+                    elif event.unicode.isdigit() and len(self.input_simulacoes_text) < 4:
+                        self.input_simulacoes_text += event.unicode
 
 
 
