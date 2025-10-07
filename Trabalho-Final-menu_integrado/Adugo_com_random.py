@@ -280,6 +280,19 @@ def utilidade_cachorros_3(estado_atual): ## função que junta as duas funções
     valor = w1 * u1 + w2 * u2
     return int(max(-1000, min(1000, valor)))
 
+def utilidade_cachorros_4(estado_atual): ## função que junta as duas funções do artigo com utilização de pesos
+
+    #valor das funções de utilidade
+    u1 = utilidade_cachorros_1(estado_atual)
+    u2 = utilidade_cachorros_2(estado_atual)
+
+    #pesos
+    w1 = 0.4 
+    w2 = 0.6
+
+    valor = w1 * u1 + w2 * u2
+    return int(max(-1000, min(1000, valor)))
+
 
 
 #Função que gera os estados os estados futuros da onça, tem como entrada o estado atual do tabuleiro
@@ -533,35 +546,40 @@ def draw_board():
     if fim_de_jogo:
 
         txt_fim_onca = [
-                f"FIM DE JOGO! {vencedor}",
+                f"FIM DE JOGO!",
+                f"{vencedor}",
                 f"Depois de {cont_turno} turnos",
                 f"Capturou {capturados} Cachorros",
-                "Pressione ESC para voltar ao menu inicial"
+                "Pressione ESC para voltar"
             ]
             
         txt_fim_cachorros = [
-            f"FIM DE JOGO! {vencedor},",
+            f"FIM DE JOGO!",
+            f"{vencedor}",
             f"Depois de {cont_turno} turnos",
             f"Sacrificou {capturados} Cachorros",
-            "Pressione ESC para voltar ao menu inicial"
+            "Pressione ESC para voltar"
         ]
 
         txt_nao_concluida = [
-            f"FIM DE JOGO! {vencedor},",
+            f"FIM DE JOGO!",
+            f"{vencedor}",
             f"Depois de {cont_turno} turnos",
-            "Pressione ESC para voltar ao menu inicial"
+            "Pressione ESC para voltar"
         ]
 
         txt_falta_combatividade_onca = [
-            f"FIM DE JOGO! {vencedor},",
+            f"FIM DE JOGO!",
+            f"{vencedor}",
             f"Depois de {cont_turno} turnos",
-            "Pressione ESC para voltar ao menu inicial"
+            "Pressione ESC para voltar"
         ]
         
         txt_falta_combatividade_cachorro = [
-            f"FIM DE JOGO! {vencedor},",
+            f"FIM DE JOGO!",
+            f"{vencedor}",
             f"Depois de {cont_turno} turnos",
-            "Pressione ESC para voltar ao menu inicial"
+            "Pressione ESC para voltar"
         ]
 
 
@@ -595,12 +613,6 @@ def get_vertex_clicked(mouse_pos):
 #Função que executa o movimento das peças
 def move_piece(from_idx, to_idx):
     global capturados
-
-    # ADICIONE ESTAS LINHAS PARA DEPURAR
-    print(f"DEBUG: Tentando acessar matriz_jogo[{from_idx}][{to_idx}]")
-    print(f"DEBUG: Formato da matriz_jogo: {len(matriz_jogo)} linhas")
-    print(f"DEBUG: matriz_jogo completa: {matriz_jogo}")
-
     # Movimento normal
     if matriz_jogo[from_idx][to_idx] == 1 and estado_do_jogo[to_idx] == 0:
         estado_do_jogo[to_idx] = estado_do_jogo[from_idx]
@@ -733,8 +745,9 @@ def adugo_run_player_vs_cachorros(profundidade):
             elif event.type == pygame.MOUSEBUTTONDOWN and not fim_de_jogo and turno == -1: 
                 idx = get_vertex_clicked(pygame.mouse.get_pos())
                 if idx is not None:
-                    if estado_do_jogo[idx] == -1 and selected is None:
-                        selected = idx
+                    if selected is None:
+                        if estado_do_jogo[idx] == turno:
+                            selected = idx
                     else:
                         if move_piece(selected, idx):
                             cont_turno +=1
@@ -802,11 +815,11 @@ def adugo_run_player_vs_cachorros(profundidade):
         clock.tick(60)  # Limita para 60 FPS
 
 
-num_teste = 99
 LIMITE_TURNOS = 25
 
 
 def adugo_run_ia_vs_ia(
+    num_simulacoes,
     profundidade_onca,
     profundidade_cachorros,
     utilidade_onca_func,
@@ -816,7 +829,6 @@ def adugo_run_ia_vs_ia(
     global aguardando_movimento_ia, tempo_inicio_espera, nos_visitados, cont_turno
     global estado_do_jogo, clock
     global capturados
-    global num_teste
 
     # Históricos para detectar falta de combatividade
     historico_onca = []
@@ -892,7 +904,6 @@ def adugo_run_ia_vs_ia(
                                 func_utilidade_o= utilidade_onca_1
                             )
                         else:
-                            print("prin entrei aqui crl")
                             valor, melhor_jogada = minimax_onca(
                                 estado_do_jogo,
                                 maximizador = True,
@@ -918,7 +929,6 @@ def adugo_run_ia_vs_ia(
                                 func_utilidade_o= utilidade_onca_1
                             )
                         else:
-                            print("Entrei aqui")
                             valor, melhor_jogada = minimax_cachorro(
                                 estado_do_jogo,
                                 maximizador = True,
@@ -1017,8 +1027,8 @@ def adugo_run_ia_vs_ia(
                             f"Cachorros Capturados: {capturados}/5 | " 
                             f"Função Onça: {utilidade_onca_func.__name__} | "
                             f"Função Cachorro: {utilidade_cachorros_func.__name__}\n")
-                            if(num_teste>0): #LOOP para testar 100x
-                                num_teste = num_teste - 1
+                            if(num_simulacoes>0): #LOOP para testar 100x
+                                num_simulacoes = num_simulacoes - 1
                                 estado_do_jogo = inicializacao()
                                 fim_de_jogo = False
                                 vencedor = None 
@@ -1056,4 +1066,4 @@ def adugo_run_ia_vs_ia(
 
 
 if __name__ == "__main__":
-    adugo_run_ia_vs_ia(5,5,utilidade_onca_0,utilidade_cachorros_2)
+    adugo_run_ia_vs_ia(1,5,5,utilidade_onca_0,utilidade_cachorros_2)
