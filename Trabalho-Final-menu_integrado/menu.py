@@ -17,6 +17,7 @@ class Recursos:
         self.font_pequena = pygame.font.Font("EldesCordel-Demo.otf", 45)
         self.font_creditos = pygame.font.Font("EldesCordel-Demo.otf", 35)
         self.fonte_grande = pygame.font.Font("EldesCordel-Demo.otf", 90)
+        self.font_profundidade = pygame.font.Font("EldesCordel-Demo.otf",30)
         self.font_dropdown = pygame.font.SysFont(None, 28)
         self.font_sys = pygame.font.SysFont(None, 40)
 
@@ -189,12 +190,12 @@ class MenuSelecaoCompvsComp(Tela):
 
         #Profundidade Onça
         self.input_onca_text = "1"
-        self.input_onca_rect = pygame.Rect(450,535,120,40)
+        self.input_onca_rect = pygame.Rect(390,400,90,35)
         self.active_onca = False
 
         #Profundidade Cachorros
         self.input_cachorro_text = "1"
-        self.input_cachorro_rect = pygame.Rect(1130,535,120,40)
+        self.input_cachorro_rect = pygame.Rect(1000,400,90,35)
         self.active_cachorro = False
 
         # Estado das seleções das funções de utilidade (nomes REAIS)
@@ -203,28 +204,35 @@ class MenuSelecaoCompvsComp(Tela):
 
         # NOVO: Campo para o número de simulações
         self.input_simulacoes_text = "100"
-        self.input_simulacoes_rect = pygame.Rect(0, 0, 200, 40) # Posição será centralizada no desenhar
+        self.input_simulacoes_rect = pygame.Rect(760, 500, 100, 35) # Posição será centralizada no desenhar
         self.active_simulacoes = False
+
+        # NOVO: Campo para o número de turnos maximos
+        self.input_turnos_text = "25"
+        self.input_turnos_rect = pygame.Rect(760, 550, 100, 35) # Posição será centralizada no desenhar
+        self.active_turnos = False
+
 
 
     def desenhar(self):
         screen = self.jogo.screen
         screen.blit(self.recursos.fundo_menu, (0, 0))
-        screen.blit(self.recursos.logo, (325, 0))
+        screen.blit(self.recursos.logo, (325, -75))
         mouse = pygame.mouse.get_pos()
 
         fonte = self.recursos.font
         fonte_celula = self.recursos.font_dropdown
+        fonte_profundidade = self.recursos.font_profundidade
 
         # Títulos
-        screen.blit(fonte.render("Onca", True, CREME), (256, 250))
-        screen.blit(fonte.render("Cachorro", True, CREME), (800, 250))
+        screen.blit(fonte.render("Onca", True, CREME), (256, 200))
+        screen.blit(fonte.render("Cachorro", True, CREME), (800, 200))
 
 
         self.retangulos_onca = []
         self.retangulos_cachorro = []
 
-        altura_inicial = 350
+        altura_inicial = 280
         espacamento_h = 20  # espaçamento horizontal
         espacamento_v = 50  # espaçamento vertical
         largura_celula = 100
@@ -251,7 +259,7 @@ class MenuSelecaoCompvsComp(Tela):
                 self.retangulos_onca.append((nome_func, rect))
 
         #Profundidade Onça
-        label_onca = fonte.render("Profunidade:", True, CREME)
+        label_onca = fonte_profundidade.render("Profundidade:", True, CREME)
         label_onca_rect = label_onca.get_rect(centery=self.input_onca_rect.centery, right=self.input_onca_rect.left - 10)
         screen.blit(label_onca, label_onca_rect)
 
@@ -265,7 +273,7 @@ class MenuSelecaoCompvsComp(Tela):
             screen,        # superfície
             CREME,         # cor da linha
             (640, 250),    # ponto inicial (x, y) em cima
-            (640, 600),    # ponto final (x, y) embaixo
+            (640, 470),    # ponto final (x, y) embaixo
             3              # espessura da linha
         )
 
@@ -299,7 +307,7 @@ class MenuSelecaoCompvsComp(Tela):
                 self.retangulos_cachorro.append((nome_func, rect))
 
         #Profundidade Cachorro
-        label_cachorro = fonte.render("Profundidade:", True, CREME)
+        label_cachorro = fonte_profundidade.render("Profundidade:", True, CREME)
         label_cachorro_rect = label_cachorro.get_rect(centery=self.input_cachorro_rect.centery, right=self.input_cachorro_rect.left - 10)
         screen.blit(label_cachorro, label_cachorro_rect)
 
@@ -307,27 +315,32 @@ class MenuSelecaoCompvsComp(Tela):
         txt_cachorro = fonte_celula.render(self.input_cachorro_text,True,PRETO)
         screen.blit(txt_cachorro, txt_cachorro.get_rect(center=self.input_cachorro_rect.center))
 
-        label_simulacoes = fonte.render("Nº de Partidas:", True, CREME)
-        label_sim_rect = label_simulacoes.get_rect(center=(screen.get_width() / 2, 590))
-        screen.blit(label_simulacoes, (label_sim_rect.x - 120, label_sim_rect.y))
+        # Desenha campo de número de simulações
+        label_simulacoes = fonte_profundidade.render("Numero de Partidas:", True, CREME)
+        label_simulacoes_rect = label_simulacoes.get_rect(centery=self.input_simulacoes_rect.centery, right=self.input_simulacoes_rect.left - 10)
+        screen.blit(label_simulacoes, label_simulacoes_rect)
         
-        # NOVO: Desenhar campo de número de simulações
-        label_simulacoes = fonte.render("Nº de Partidas:", True, CREME)
-        label_sim_rect = label_simulacoes.get_rect(center=(screen.get_width() / 2, 590))
-        screen.blit(label_simulacoes, (label_sim_rect.x - 120, label_sim_rect.y))
-        
-        self.input_simulacoes_rect.centery = label_sim_rect.centery
-        self.input_simulacoes_rect.left = label_sim_rect.right - 100
-        cor_simulacoes = VERDE_CLARO if self.active_simulacoes else CINZA
-        pygame.draw.rect(screen, cor_simulacoes, self.input_simulacoes_rect, border_radius=5)
-        txt_simulacoes = fonte_celula.render(self.input_simulacoes_text, True, PRETO)
+        pygame.draw.rect(screen, VERDE_CLARO if self.active_simulacoes else CINZA, self.input_simulacoes_rect, border_radius=5)
+        txt_simulacoes = fonte_celula.render(self.input_simulacoes_text,True,PRETO)
         screen.blit(txt_simulacoes, txt_simulacoes.get_rect(center=self.input_simulacoes_rect.center))
+
+
+       # Desenha campo de número de turnos
+        label_turnos = fonte_profundidade.render("Maximo de turnos:", True, CREME)
+        label_turnos_rect = label_turnos.get_rect(centery=self.input_turnos_rect.centery, right=self.input_turnos_rect.left - 10)
+        screen.blit(label_turnos, label_turnos_rect)
+        
+        pygame.draw.rect(screen, VERDE_CLARO if self.active_turnos else CINZA, self.input_turnos_rect, border_radius=5)
+        txt_turnos = fonte_celula.render(self.input_turnos_text,True,PRETO)
+        screen.blit(txt_turnos, txt_turnos.get_rect(center=self.input_turnos_rect.center))
+
+
 
         # Botão iniciar jogo
         label = "Iniciar Jogo"
         botao_surface = fonte.render(label, True, CREME)
 
-        self.botao_iniciar_rect = botao_surface.get_rect(center=(625,660))
+        self.botao_iniciar_rect = botao_surface.get_rect(center=(645,660))
 
         cor = VERDE_CLARO if self.botao_iniciar_rect.collidepoint(mouse) else CREME
         botao_surface = fonte.render(label, True, cor)
@@ -354,18 +367,33 @@ class MenuSelecaoCompvsComp(Tela):
                 if self.input_onca_rect.collidepoint(event.pos):
                     self.active_onca = True
                     self.active_cachorro = False
+                    self.active_simulacoes = False
+                    self.active_turnos = False
+                    self.input_onca_text = ""
+
                 # Ativar campo dos Cachorros
                 elif self.input_cachorro_rect.collidepoint(event.pos):
                     self.active_cachorro = True
                     self.active_onca = False
+                    self.active_turnos = False
+                    self.active_simulacoes = False
+                    self.input_cachorro_text = ""
 
+                # Ativar campo da simulações 
                 elif self.input_simulacoes_rect.collidepoint(event.pos):
-                    self.active_onca = False
                     self.active_cachorro = False
+                    self.active_onca = False
+                    self.active_turnos = False
                     self.active_simulacoes = True
-                else:
-                    self.active_onca = False
+                    self.input_simulacoes_text = ""
+
+                # Ativar campo turnos
+                elif self.input_turnos_rect.collidepoint(event.pos):
                     self.active_cachorro = False
+                    self.active_onca = False
+                    self.active_simulacoes = False
+                    self.active_turnos = True
+                    self.input_turnos_text = ""
 
                 # Seleção de função de utilidade Onça
                 for nome_func, rect in self.retangulos_onca:
@@ -385,13 +413,17 @@ class MenuSelecaoCompvsComp(Tela):
                         valor_onca = int(self.input_onca_text)
                         valor_cachorro = int(self.input_cachorro_text)
                         num_partidas = int(self.input_simulacoes_text)
+                        max_turnos = int(self.input_turnos_text)
                         if valor_onca < 1 or valor_cachorro < 1:
                             self.erro = "Profundidade menor que 1"
-                        elif num_partidas < 1: # NOVO: Validação
+                        elif num_partidas < 1: # Validação
                             self.erro = "Número de partidas deve ser maior que 0"
+                        elif max_turnos < 1: # Validação
+                            self.erro = "Número de turnos deve ser maior que 0"
                         else:
                             adugo_run_ia_vs_ia(
                                 num_simulacoes = num_partidas-1,
+                                max_turnos= max_turnos,
                                 profundidade_onca=valor_onca,
                                 profundidade_cachorros=valor_cachorro,
                                 utilidade_onca_func=UTILIDADES[self.utilidade_onca],
@@ -404,20 +436,26 @@ class MenuSelecaoCompvsComp(Tela):
                 if self.active_onca:
                     if event.key == pygame.K_BACKSPACE:
                         self.input_onca_text = self.input_onca_text[:-1]
-                    elif event.unicode.isdigit() and len(self.input_onca_text) < 2:
+                    elif event.unicode.isdigit() and len(self.input_onca_text) < 1:
                         self.input_onca_text += event.unicode
 
                 elif self.active_cachorro:
                     if event.key == pygame.K_BACKSPACE:
                         self.input_cachorro_text = self.input_cachorro_text[:-1]
-                    elif event.unicode.isdigit() and len(self.input_cachorro_text) < 2:
+                    elif event.unicode.isdigit() and len(self.input_cachorro_text) < 1:
                         self.input_cachorro_text += event.unicode
 
                 elif self.active_simulacoes:
                     if event.key == pygame.K_BACKSPACE:
                         self.input_simulacoes_text = self.input_simulacoes_text[:-1]
-                    elif event.unicode.isdigit() and len(self.input_simulacoes_text) < 4:
+                    elif event.unicode.isdigit() and len(self.input_simulacoes_text) < 3:
                         self.input_simulacoes_text += event.unicode
+
+                elif self.active_turnos:
+                    if event.key == pygame.K_BACKSPACE:
+                        self.input_turnos_text = self.input_turnos_text[:-1]
+                    elif event.unicode.isdigit() and len(self.input_turnos_text) < 3:
+                        self.input_turnos_text += event.unicode
 
 
 
