@@ -815,11 +815,10 @@ def adugo_run_player_vs_cachorros(profundidade):
         clock.tick(60)  # Limita para 60 FPS
 
 
-LIMITE_TURNOS = 25
-
 
 def adugo_run_ia_vs_ia(
     num_simulacoes,
+    max_turnos,
     profundidade_onca,
     profundidade_cachorros,
     utilidade_onca_func,
@@ -1001,9 +1000,9 @@ def adugo_run_ia_vs_ia(
                     combatividade_cachorro = combatividade_cachorro + 1 
                     vencedor = "Combatividade (Cachorros)"
                 # Vitória normal ou limite de turnos
-                elif resultado in ["Vitória da Onça", "Vitória dos Cachorros"] or cont_turno >= LIMITE_TURNOS:
+                elif resultado in ["Vitória da Onça", "Vitória dos Cachorros"] or cont_turno >= max_turnos:
                     fim_de_jogo = True
-                    if cont_turno >= LIMITE_TURNOS and resultado not in ["Vitória da Onça", "Vitória dos Cachorros"]:
+                    if cont_turno >= max_turnos and resultado not in ["Vitória da Onça", "Vitória dos Cachorros"]:
                         empate = empate + 1
                         vencedor = "Partida não concluída"
                     elif resultado == "Vitória da Onça":
@@ -1066,4 +1065,4 @@ def adugo_run_ia_vs_ia(
 
 
 if __name__ == "__main__":
-    adugo_run_ia_vs_ia(1,5,5,utilidade_onca_0,utilidade_cachorros_2)
+    adugo_run_ia_vs_ia(1,50,5,5,utilidade_onca_0,utilidade_cachorros_2)
