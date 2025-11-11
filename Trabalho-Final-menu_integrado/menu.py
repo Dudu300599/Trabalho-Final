@@ -1,5 +1,7 @@
 import pygame
 from Adugo_com_random import *
+from debug import log_selection_menu
+
 
 pygame.init()
 
@@ -47,7 +49,7 @@ class MenuPrincipal(Tela):
         screen.blit(self.recursos.fundo_menu, (0, 0))
         screen.blit(self.recursos.logo, (325, 0))
         self.botoes = []
-        opcoes = ["Jogar", "Regras", "Creditos"]
+        opcoes = ["Jogar", "Regras", "Historico", "Creditos"]
         mouse = pygame.mouse.get_pos()
         for i, texto in enumerate(opcoes):
             rect = self.recursos.font.render(texto, True, CREME).get_rect(center=(625, 350 + i * 80))
@@ -66,8 +68,11 @@ class MenuPrincipal(Tela):
                             self.jogo.mudar_estado(MenuJogar(self.jogo))
                         elif texto == "Regras":
                             self.jogo.mudar_estado(TelaRegras(self.jogo))
+                        elif texto == "Historico":
+                            log_selection_menu()
                         elif texto == "Creditos":
                             self.jogo.mudar_estado(TelaCreditos(self.jogo))
+                        
 
 class MenuJogar(Tela):
     def desenhar(self):
