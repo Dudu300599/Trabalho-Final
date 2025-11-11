@@ -102,6 +102,7 @@ try:
     peca_onca = pygame.transform.scale(pygame.image.load("imagens/ONÇA.png"), (50,50))
     peca_cachorro = pygame.transform.scale(pygame.image.load("imagens/CACHORRO.png"), (50,50))
     fundo_jogo = pygame.transform.scale(pygame.image.load("imagens/Tabuleiro_Tabuleiro_Frente.png").convert(),(1280,720))
+    fundo_menu = pygame.transform.scale(pygame.image.load("imagens/Jogo_da_Onca_Padronagem.png").convert(),(1280, 720))
     IMAGENS_OK = True
 except FileNotFoundError:
     print("Aviso: Arquivos de imagem não encontrados. Usando círculos coloridos.")
@@ -123,6 +124,16 @@ def parse_log(nome_arquivo):
   # Adiciona o "Turno 0" (estado inicial)
   historico_estados.append(inicializacao())
 
+
+  # Dicionário para guardar o resumo
+  metadata = {
+    'Resultado': 'N/A',
+    'Profundidade Onça': 'N/A',
+    'Profundidade Cachorros': 'N/A',
+    'Função Onça': 'N/A',
+    'Função Cachorro': 'N/A'
+  }
+
   # Regex para encontrar a linha de estado e capturar o conteúdo
   regex = re.compile(r"Estado Atual do Tabuleiro:\s*\[\[(.*?)\]\]")
   
@@ -137,9 +148,18 @@ def parse_log(nome_arquivo):
           # Converte a string "1, 0, -1" para a lista de inteiros [1, 0, -1]
           estado_lista = [int(x.strip()) for x in estado_str.split(',')]
           historico_estados.append(estado_lista)
+        # 2. Procura pelas linhas de resumo
+        if ": " in linha:
+          try:
+            # Tenta dividir a linha em "Chave: Valor"
+            key, value = linha.strip().split(': ', 1)
+            if key in metadata: # Se for uma chave que queremos
+              metadata[key] = value
+          except ValueError:
+            continue # Linha mal formatada (ex: "=====..."), ignora
   
     print(f"Log '{nome_arquivo}' carregado. {len(historico_estados) - 1} turnos encontrados.")
-    return historico_estados
+    return historico_estados, metadata
 
   except FileNotFoundError:
     print(f"Erro: Arquivo de log '{nome_arquivo}' não encontrado.")
@@ -149,7 +169,7 @@ def parse_log(nome_arquivo):
     return None
 
 
-def draw_replay_ui(estado_do_jogo, turno_num, total_turnos, btn_prev, btn_next):
+def draw_replay_ui(estado_do_jogo, turno_num, total_turnos, btn_prev, btn_next, metadata):
   """
   Desenha o estado atual do tabuleiro e a interface de replay.
   """
@@ -210,7 +230,42 @@ def draw_replay_ui(estado_do_jogo, turno_num, total_turnos, btn_prev, btn_next):
   
   # Dica para voltar
   txt_esc = font.render("Pressione ESC para voltar ao menu", True, BRANCO)
-  screen.blit(txt_esc, (20, 100))
+  screen.blit(txt_esc, (20, 600))
+
+  # --- Bloco de desenho dos Metadados (NOVO) ---
+
+  # Posição X inicial para o texto (canto direito)
+  x_pos = 900 # 1280 (largura da tela) - 20 (padding)
+  y_pos = 20  # Posição Y inicial
+
+  # Lista de chaves na ordem que queremos desenhar
+  info_order = [
+    'Resultado', 
+    'Profundidade Onça', 
+    'Profundidade Cachorros', 
+    'Função Onça', 
+    'Função Cachorro'
+  ]
+
+  for key in info_order:
+    value = metadata.get(key, 'N/A') # Pega o valor ou 'N/A'
+
+    if key in ['Função Onça', 'Função Cachorro']:
+      value = value.replace("utilidade_", "") # Remove o prefixo
+
+    # Cria o texto (Ex: "Resultado: Vitória da Onça")
+    text_str = f"{key}: {value}"
+
+    # Usamos a fonte 'font_item' (SysFont 32)
+    txt_surf = font_item.render(text_str, True, BRANCO)
+
+    # Pega o rect e alinha à *direita* (topright)
+    txt_rect = txt_surf.get_rect(topleft=(x_pos, y_pos))
+
+    screen.blit(txt_surf, txt_rect)
+
+    # Move a posição Y para a próxima linha
+    y_pos += 35 # Espaçamento
 
 
 def main_replay(caminho_do_log):
@@ -220,7 +275,7 @@ def main_replay(caminho_do_log):
   """
   
   # 1. Carregar os dados do log
-  historico_estados = parse_log(caminho_do_log)
+  historico_estados, metadata = parse_log(caminho_do_log)
   if not historico_estados:
     print("Saindo do programa, log não pôde ser carregado.")
     return # Volta ao menu
@@ -265,8 +320,8 @@ def main_replay(caminho_do_log):
     estado_para_desenhar = historico_estados[turno_atual]
     
     # Chama a função de desenho
-    draw_replay_ui(estado_para_desenhar, turno_atual, total_turnos, btn_prev, btn_next)
-    
+    draw_replay_ui(estado_para_desenhar, turno_atual, total_turnos, btn_prev, btn_next, metadata)
+
     # --- Atualização da Tela ---
     pygame.display.flip()
     clock.tick(30) # Não precisa de 60 FPS, 30 é o bastantes
@@ -315,10 +370,10 @@ def log_selection_menu():
 
   while True:
     # Preenche o fundo (pode ser uma imagem ou cor)
-    screen.fill(CREME) # Cor de fundo do menu
+    screen.blit(fundo_menu, (0, 0))
     
     # Título
-    title_surf = font_title.render("Selecione um Log para Replay", True, PRETO)
+    title_surf = font_title.render("Selecione um Log para Replay", True, BRANCO)
     screen.blit(title_surf, ( (1280 - title_surf.get_width()) // 2, 20))
     
     # Calcular total de páginas
@@ -339,7 +394,7 @@ def log_selection_menu():
     for log_path in current_page_files:
       # Pega só o nome do arquivo, não o caminho completo
       log_name = os.path.basename(log_path) 
-      item_surf = font_item.render(log_name, True, PRETO)
+      item_surf = font_item.render(log_name, True, BRANCO)
       item_rect = item_surf.get_rect(topleft=(50, y_offset))
       
       # Feedback visual (hover)
@@ -351,7 +406,7 @@ def log_selection_menu():
       y_offset += 35 # Espaçamento entre os itens
 
     # Desenhar controles de página
-    page_surf = font_item.render(f"Página {page + 1} / {total_pages + 1}", True, PRETO)
+    page_surf = font_item.render(f"Página {page + 1} / {total_pages + 1}", True, BRANCO)
     page_rect = page_surf.get_rect(center=(btn_next_page_rect.right + 100, btn_next_page_rect.centery))
     screen.blit(page_surf, page_rect)
     
@@ -360,6 +415,7 @@ def log_selection_menu():
     
     pygame.draw.rect(screen, CINZA, btn_next_page_rect, border_radius=5)
     screen.blit(font_btn.render("Próximo", True, PRETO), btn_next_page_rect.move(25, 12))
+    
 
     pygame.display.flip()
 
@@ -368,6 +424,10 @@ def log_selection_menu():
       if event.type == pygame.QUIT:
         pygame.quit()
         sys.exit()
+
+      elif event.type == pygame.KEYDOWN:
+         if event.key == pygame.K_ESCAPE:
+            return # <-- Isso retorna ao menu principal!
       
       if event.type == pygame.MOUSEBUTTONDOWN:
         # 1. Checa cliques nos logs
