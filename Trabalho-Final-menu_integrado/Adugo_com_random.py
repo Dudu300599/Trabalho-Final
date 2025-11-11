@@ -280,6 +280,7 @@ def utilidade_cachorros_3(estado_atual): ## função que junta as duas funções
     valor = w1 * u1 + w2 * u2
     return int(max(-1000, min(1000, valor)))
 
+
 def utilidade_cachorros_4(estado_atual): ## função que junta as duas funções do artigo com utilização de pesos
 
     #valor das funções de utilidade
@@ -292,9 +293,6 @@ def utilidade_cachorros_4(estado_atual): ## função que junta as duas funções
 
     valor = w1 * u1 + w2 * u2
     return int(max(-1000, min(1000, valor)))
-
-
-
 
 
 #Função que gera os estados os estados futuros da onça, tem como entrada o estado atual do tabuleiro
@@ -482,7 +480,7 @@ def minimax_cachorro(estado_atual, maximizador, profundidade,func_utilidade_c, f
 import os
 from datetime import datetime
 
-def salvar_log(historico_partida, modo_jogo, historico_estados_jogo):
+def salvar_log(historico_partida, modo_jogo, historico_estados_jogo, profundidade_onca, profundidade_cachorros, utilidade_onca_func, utilidade_cachorros_func):
     """
     Salva todo o histórico de uma partida usando um único vetor de jogadas.
     """
@@ -496,6 +494,12 @@ def salvar_log(historico_partida, modo_jogo, historico_estados_jogo):
 
     try:
         with open(caminho_arquivo, "a", encoding="utf-8") as f:
+            f.write("\n===== RESUMO DA PARTIDA =====\n")
+            f.write(f"Resultado: {vencedor}\n")
+            f.write(f"Profundidade Onça: {profundidade_onca}\n")
+            f.write(f"Profundidade Cachorros: {profundidade_cachorros}\n")
+            f.write(f"Função Onça: {utilidade_onca_func.__name__}\n")
+            f.write(f"Função Cachorro: {utilidade_cachorros_func.__name__}\n")
             f.write("\n===== HISTÓRICO DE JOGADAS =====\n")
             for i, jogada in enumerate(historico_partida):
                 f.write(f"Turno {i+1}: {jogada['turno']}: {jogada['origem']} → {jogada['destino']}\n")
@@ -1017,7 +1021,7 @@ def adugo_run_ia_vs_ia(
                         vencedor = resultado
 
                 if fim_de_jogo:
-                    salvar_log(historico_partida,"ia_vs_ia",historico_estados_jogo)
+                    salvar_log(historico_partida,"ia_vs_ia",historico_estados_jogo,profundidade_onca, profundidade_cachorros, utilidade_onca_func, utilidade_cachorros_func)
                     historico_partida = []
                     historico_estados_jogo = []
                     print(f"Fim de jogo: {vencedor}")
