@@ -1,0 +1,6 @@
+Experimento 8
+
+Limite de Turnos: N
+Profundidade Onça: 3
+Profundidade Cachorros: 6
+Falta de Combatividade: N

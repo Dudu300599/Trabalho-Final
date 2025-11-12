@@ -1,3 +1,4 @@
+import math
 import pygame
 import sys
 import re
@@ -332,7 +333,7 @@ def main_replay(caminho_do_log):
 # 3. NOVAS FUNÇÕES (Menu de Seleção)
 # =============================================================================
 
-def find_logs(log_directory="logs/ia_vs_ia"):
+def find_logs(log_directory="logs"):
   """Encontra todos os arquivos .txt no diretório de log."""
   
   # Baseado no seu arquivo de menu, os logs estão em "logs/ia_vs_ia"
@@ -349,20 +350,65 @@ def find_logs(log_directory="logs/ia_vs_ia"):
   log_files.sort(reverse=True) 
   return log_files
 
+def find_logs2(base_directory="logs"):
+
+  if not os.path.isdir(base_directory):
+    print(f"Erro: Diretório '{base_directory}' não encontrado.")
+    return []
+
+  desc_patterns = [
+        r'^descricao', r'^descrição', r'descricao', r'descrição',
+        r'^readme', r'readme', r'^info', r'info', r'^index', r'index',
+        r'description'
+  ]
+
+  def is_description_file(filename):
+    low = filename.lower()
+    return any(p in low for p in desc_patterns)
+  
+  experimentos = {}
+  
+  for nome_pasta in os.listdir(base_directory):
+    caminho_exp = os.path.join(base_directory, nome_pasta)
+    if not os.path.isdir(caminho_exp):
+      continue
+
+    m = re.search(r'Experimento\s*(\d+)', nome_pasta, re.IGNORECASE)
+    if not m:
+      continue
+
+    exp_number = int(m.group(1))
+    exp_name = f"Experimento {exp_number}"
+
+    txt_files = []
+
+    for root, dirs, files in os.walk(caminho_exp):
+      for f in files:
+        if f.lower().endswith('.txt') and not is_description_file(f):
+          full_path = os.path.join(root, f)
+          txt_files.append((full_path, f))
+    
+    if txt_files:
+      txt_files.sort(key=lambda x: x[1], reverse=False)
+      experimentos[exp_number] = (exp_name, txt_files)
+
+  return [experimentos[k] for k in sorted(experimentos.keys())] 
+
 def log_selection_menu():
   """
   Loop principal do menu de seleção de logs.
   """
   
-  log_files = find_logs()
+  log_files = find_logs2()
+  print(log_files)
   if not log_files:
-    print("Nenhum arquivo de log encontrado na pasta 'logs/ia_vs_ia'. Saindo.")
+    print(f"Nenhum arquivo de log encontrado na pasta '{log_files}'. Saindo.")
     pygame.quit()
     sys.exit()
 
   # Para paginação
   page = 0
-  items_per_page = 15 # Ajuste conforme o tamanho da sua tela/fonte
+  items_per_page = 2 # Ajuste conforme o tamanho da sua tela/fonte
   
   # Botões de paginação
   btn_prev_page_rect = pygame.Rect(20, 650, 150, 50)
@@ -377,36 +423,59 @@ def log_selection_menu():
     screen.blit(title_surf, ( (1280 - title_surf.get_width()) // 2, 20))
     
     # Calcular total de páginas
-    total_pages = (len(log_files) - 1) // items_per_page
+    total_pages = max(1, math.ceil(len(log_files) / items_per_page))
     
     # Pegar logs da página atual
     start_index = page * items_per_page
     end_index = start_index + items_per_page
     current_page_files = log_files[start_index:end_index]
+
+    if not current_page_files:
+        page = max(0, total_pages - 1)
+        current_page_files = log_files[page * items_per_page : page * items_per_page + items_per_page]
     
     # Lista para guardar retângulos clicáveis
     clickable_logs = [] 
     
     # Desenhar itens da lista
-    y_offset = 80
+    y_offset = 100
     mouse_pos = pygame.mouse.get_pos()
+    col_width = 600
+    col_x = [100, 640]
+    col_y = 120
+    exp_index = 0
+    margin_x = 80
+    base_y = 100
     
-    for log_path in current_page_files:
-      # Pega só o nome do arquivo, não o caminho completo
-      log_name = os.path.basename(log_path) 
-      item_surf = font_item.render(log_name, True, BRANCO)
-      item_rect = item_surf.get_rect(topleft=(50, y_offset))
+    for i, (exp_name, logs) in enumerate(current_page_files):
+      col = exp_index % items_per_page
+      x_offset = col_x[col]
       
-      # Feedback visual (hover)
-      if item_rect.collidepoint(mouse_pos):
-        pygame.draw.rect(screen, CINZA, item_rect.inflate(10, 2)) # Infla o fundo
-      
-      screen.blit(item_surf, item_rect)
-      clickable_logs.append((log_path, item_rect))
-      y_offset += 35 # Espaçamento entre os itens
+      if col == 0 and exp_index !=0:
+        col_y += 300
+
+      header_surf = font_item.render(exp_name, True, BRANCO)
+      screen.blit(header_surf, (x_offset, col_y))
+      y_offset = col_y + 40
+
+      for log_path, log_name in logs:
+        if y_offset > 600:
+          break
+
+        item_surf =  font_item.render(f" - {log_name}", True, BRANCO)
+        item_rect = item_surf.get_rect(topleft=(x_offset + 20 , y_offset))
+
+        if item_rect.collidepoint(mouse_pos):
+          pygame.draw.rect(screen, CINZA, item_rect.inflate(10,2))
+
+        screen.blit(item_surf, item_rect)
+        clickable_logs.append((log_path, item_rect))
+        y_offset += 30
+
+      exp_index +=1
 
     # Desenhar controles de página
-    page_surf = font_item.render(f"Página {page + 1} / {total_pages + 1}", True, BRANCO)
+    page_surf = font_item.render(f"Página {page + 1} / {total_pages}", True, BRANCO)
     page_rect = page_surf.get_rect(center=(btn_next_page_rect.right + 100, btn_next_page_rect.centery))
     screen.blit(page_surf, page_rect)
     

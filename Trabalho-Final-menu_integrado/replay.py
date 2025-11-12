@@ -268,7 +268,7 @@ if __name__ == "__main__":
     # IMPORTANTE: Coloque aqui o nome do arquivo de log que você quer ler.
     # Ele deve estar na mesma pasta que o script replay.py
     # -----------------------------------------------------------------
-    NOME_DO_ARQUIVO_LOG = "logs/ia_vs_ia/log_20251030_125624.txt" # Exemplo! Troque pelo seu.
+    NOME_DO_ARQUIVO_LOG = "/Users/wiul/Downloads/log_20251018_173415.txt" # Exemplo! Troque pelo seu.
     # -----------------------------------------------------------------
 
     # Verifica se foi passado um argumento (opcional)
