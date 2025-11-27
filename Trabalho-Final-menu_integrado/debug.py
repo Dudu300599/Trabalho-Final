@@ -170,7 +170,7 @@ def parse_log(nome_arquivo):
     return None
 
 
-def draw_replay_ui(estado_do_jogo, turno_num, total_turnos, btn_prev, btn_next, metadata):
+def draw_replay_ui(estado_do_jogo, turno_num, total_turnos, btn_prev, btn_next, btn_last, metadata):
   """
   Desenha o estado atual do tabuleiro e a interface de replay.
   """
@@ -228,6 +228,12 @@ def draw_replay_ui(estado_do_jogo, turno_num, total_turnos, btn_prev, btn_next, 
   txt_next = font_btn.render("Próximo", True, PRETO)
   txt_rect_next = txt_next.get_rect(center=btn_next.center)
   screen.blit(txt_next, txt_rect_next)
+  
+  # Botão Final
+  pygame.draw.rect(screen, CINZA, btn_last, border_radius=5)
+  txt_last = font_btn.render("Final", True, PRETO)
+  txt_rect_last = txt_last.get_rect(center=btn_last.center)
+  screen.blit(txt_last, txt_rect_last)
   
   # Dica para voltar
   txt_esc = font.render("Pressione ESC para voltar ao menu", True, BRANCO)
@@ -290,6 +296,9 @@ def main_replay(caminho_do_log):
   btn_prev = pygame.Rect(20, 650, 150, 50)
   btn_next = pygame.Rect(190, 650, 150, 50)
 
+
+  btn_last = pygame.Rect(960, 650, 200, 50)
+
   # 4. Loop Principal
   running = True
   while running:
@@ -315,13 +324,18 @@ def main_replay(caminho_do_log):
           turno_atual = min(total_turnos, turno_atual + 1)
           print(f"Mostrando Turno {turno_atual}")
 
+        elif btn_last.collidepoint(event.pos):
+          # Pula direto para o fim
+          turno_atual = total_turnos 
+          print(f"Mostrando Turno Final: {turno_atual}")
+
     # --- Lógica de Desenho ---
     
     # Pega o estado [1, 1, ..., -1, ...] correspondente ao turno atual
     estado_para_desenhar = historico_estados[turno_atual]
     
     # Chama a função de desenho
-    draw_replay_ui(estado_para_desenhar, turno_atual, total_turnos, btn_prev, btn_next, metadata)
+    draw_replay_ui(estado_para_desenhar, turno_atual, total_turnos, btn_prev, btn_next, btn_last, metadata)
 
     # --- Atualização da Tela ---
     pygame.display.flip()
