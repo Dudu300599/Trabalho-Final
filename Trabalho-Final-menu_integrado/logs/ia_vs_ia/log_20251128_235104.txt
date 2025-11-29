@@ -1,0 +1,639 @@
+
+===== RESUMO DA PARTIDA =====
+Resultado: Vitória da Onça
+Profundidade Onça: 3
+Profundidade Cachorros: 6
+Função Onça: utilidade_onca_1
+Função Cachorro: utilidade_cachorros_4
+
+===== HISTÓRICO DE JOGADAS =====
+Turno 1: Onça: 12 → 17
+  Possíveis jogadas: [16, 17, 18]
+  Valor Utilidade:-93
+  Tempo: 0.0093s
+  Nós avaliados: 101
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 2: Cachorros: 14 → 19
+  Possíveis jogadas: [18, 19]
+  Valor Utilidade:-240
+  Tempo: 2.9015s
+  Nós avaliados: 28872
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 3: Onça: 17 → 12
+  Possíveis jogadas: [12, 16, 18, 22]
+  Valor Utilidade:-20
+  Tempo: 0.0213s
+  Nós avaliados: 81
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 4: Cachorros: 19 → 24
+  Possíveis jogadas: [14, 18, 24]
+  Valor Utilidade:-180
+  Tempo: 2.6278s
+  Nós avaliados: 27340
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 5: Onça: 12 → 18
+  Possíveis jogadas: [16, 17, 18, 14]
+  Valor Utilidade:-100
+  Tempo: 0.0160s
+  Nós avaliados: 161
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 6: Cachorros: 13 → 12
+  Possíveis jogadas: [12, 14]
+  Valor Utilidade:-120
+  Tempo: 2.3906s
+  Nós avaliados: 25777
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 7: Onça: 18 → 22
+  Possíveis jogadas: [13, 14, 17, 19, 22, 23]
+  Valor Utilidade:-20
+  Tempo: 0.0113s
+  Nós avaliados: 124
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 8: Cachorros: 10 → 16
+  Possíveis jogadas: [15, 16]
+  Valor Utilidade:-120
+  Tempo: 3.4444s
+  Nós avaliados: 35758
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 9: Onça: 22 → 18
+  Possíveis jogadas: [17, 18, 21, 23, 25, 26, 27, 10]
+  Valor Utilidade:-20
+  Tempo: 0.0135s
+  Nós avaliados: 148
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 10: Cachorros: 9 → 14
+  Possíveis jogadas: [14]
+  Valor Utilidade:-120
+  Tempo: 5.3732s
+  Nós avaliados: 60158
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 11: Onça: 18 → 22
+  Possíveis jogadas: [13, 17, 19, 22, 23]
+  Valor Utilidade:-20
+  Tempo: 0.0176s
+  Nós avaliados: 224
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 12: Cachorros: 24 → 19
+  Possíveis jogadas: [18, 19, 23]
+  Valor Utilidade:0
+  Tempo: 6.0772s
+  Nós avaliados: 69591
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 13: Onça: 22 → 23
+  Possíveis jogadas: [17, 18, 21, 23, 25, 26, 27, 10]
+  Valor Utilidade:-40
+  Tempo: 0.0163s
+  Nós avaliados: 197
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0]]
+Turno 14: Cachorros: 14 → 18
+  Possíveis jogadas: [9, 13, 18]
+  Valor Utilidade:-60
+  Tempo: 5.4851s
+  Nós avaliados: 59734
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0]]
+Turno 15: Onça: 23 → 22
+  Possíveis jogadas: [22, 24, 13]
+  Valor Utilidade:-20
+  Tempo: 0.0087s
+  Nós avaliados: 83
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 16: Cachorros: 18 → 13
+  Possíveis jogadas: [13, 14, 17, 23, 24]
+  Valor Utilidade:-80
+  Tempo: 10.0240s
+  Nós avaliados: 117331
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 17: Onça: 22 → 18
+  Possíveis jogadas: [17, 18, 21, 23, 25, 26, 27, 10]
+  Valor Utilidade:-248
+  Tempo: 0.0121s
+  Nós avaliados: 149
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 18: Cachorros: 16 → 10
+  Possíveis jogadas: [10, 15, 17, 20, 21, 22]
+  Valor Utilidade:-120
+  Tempo: 4.2742s
+  Nós avaliados: 49413
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 19: Onça: 18 → 14
+  Possíveis jogadas: [14, 17, 22, 23, 24]
+  Valor Utilidade:-134
+  Tempo: 0.0103s
+  Nós avaliados: 111
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 20: Cachorros: 12 → 16
+  Possíveis jogadas: [16, 17, 18]
+  Valor Utilidade:-120
+  Tempo: 3.2288s
+  Nós avaliados: 36085
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, -1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 21: Onça: 14 → 18
+  Possíveis jogadas: [9, 18, 12, 24]
+  Valor Utilidade:-100
+  Tempo: 0.0133s
+  Nós avaliados: 140
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 22: Cachorros: 16 → 17
+  Possíveis jogadas: [12, 15, 17, 20, 21, 22]
+  Valor Utilidade:-120
+  Tempo: 5.0766s
+  Nós avaliados: 56338
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 23: Onça: 18 → 14
+  Possíveis jogadas: [12, 14, 22, 23, 24, 16]
+  Valor Utilidade:-93
+  Tempo: 0.0118s
+  Nós avaliados: 130
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, -1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 24: Cachorros: 17 → 12
+  Possíveis jogadas: [12, 16, 18, 22]
+  Valor Utilidade:-160
+  Tempo: 7.3399s
+  Nós avaliados: 82306
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 25: Onça: 14 → 18
+  Possíveis jogadas: [9, 18, 24]
+  Valor Utilidade:-153
+  Tempo: 0.0060s
+  Nós avaliados: 71
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 26: Cachorros: 12 → 17
+  Possíveis jogadas: [16, 17]
+  Valor Utilidade:-120
+  Tempo: 2.9349s
+  Nós avaliados: 31658
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 27: Onça: 18 → 24
+  Possíveis jogadas: [12, 14, 22, 23, 24, 16]
+  Valor Utilidade:-93
+  Tempo: 0.0118s
+  Nós avaliados: 130
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0]]
+Turno 28: Cachorros: 10 → 16
+  Possíveis jogadas: [15, 16]
+  Valor Utilidade:-180
+  Tempo: 8.2815s
+  Nós avaliados: 82095
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0]]
+Turno 29: Onça: 24 → 14
+  Possíveis jogadas: [18, 23, 14]
+  Valor Utilidade:-146
+  Tempo: 0.0135s
+  Nós avaliados: 161
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, -1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 30: Cachorros: 16 → 21
+  Possíveis jogadas: [10, 12, 15, 20, 21, 22]
+  Valor Utilidade:-240
+  Tempo: 12.9214s
+  Nós avaliados: 139036
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, -1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 31: Onça: 14 → 12
+  Possíveis jogadas: [9, 18, 19, 12]
+  Valor Utilidade:-200
+  Tempo: 0.0152s
+  Nós avaliados: 164
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, -1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 32: Cachorros: 21 → 20
+  Possíveis jogadas: [16, 20, 22]
+  Valor Utilidade:-300
+  Tempo: 13.0459s
+  Nós avaliados: 127060
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, -1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 33: Onça: 12 → 22
+  Possíveis jogadas: [13, 16, 18, 10, 22]
+  Valor Utilidade:-200
+  Tempo: 0.0203s
+  Nós avaliados: 198
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 34: Cachorros: 8 → 13
+  Possíveis jogadas: [9, 12, 13, 14]
+  Valor Utilidade:-340
+  Tempo: 3.8149s
+  Nós avaliados: 34426
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 35: Onça: 22 → 18
+  Possíveis jogadas: [16, 17, 18, 21, 23, 25, 26, 27]
+  Valor Utilidade:-400
+  Tempo: 0.0186s
+  Nós avaliados: 165
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 36: Cachorros: 11 → 12
+  Possíveis jogadas: [10, 12, 16]
+  Valor Utilidade:-300
+  Tempo: 4.5662s
+  Nós avaliados: 43957
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 37: Onça: 18 → 23
+  Possíveis jogadas: [14, 17, 19, 22, 23, 24, 8]
+  Valor Utilidade:-200
+  Tempo: 0.0140s
+  Nós avaliados: 128
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0]]
+Turno 38: Cachorros: 4 → 8
+  Possíveis jogadas: [8, 9]
+  Valor Utilidade:-300
+  Tempo: 4.4006s
+  Nós avaliados: 40496
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0]]
+Turno 39: Onça: 23 → 22
+  Possíveis jogadas: [18, 22, 24]
+  Valor Utilidade:-200
+  Tempo: 0.0148s
+  Nós avaliados: 115
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 40: Cachorros: 20 → 15
+  Possíveis jogadas: [15, 16, 21]
+  Valor Utilidade:-240
+  Tempo: 5.1857s
+  Nós avaliados: 49769
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 41: Onça: 22 → 21
+  Possíveis jogadas: [16, 17, 18, 21, 23, 25, 26, 27]
+  Valor Utilidade:-400
+  Tempo: 0.0169s
+  Nós avaliados: 147
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 42: Cachorros: 15 → 10
+  Possíveis jogadas: [10, 16, 20]
+  Valor Utilidade:-300
+  Tempo: 4.9635s
+  Nós avaliados: 46625
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 43: Onça: 21 → 16
+  Possíveis jogadas: [16, 20, 22]
+  Valor Utilidade:-200
+  Tempo: 0.0088s
+  Nós avaliados: 74
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 44: Cachorros: 8 → 14
+  Possíveis jogadas: [4, 9, 14]
+  Valor Utilidade:-300
+  Tempo: 2.5483s
+  Nós avaliados: 21085
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 45: Onça: 16 → 8
+  Possíveis jogadas: [11, 15, 17, 20, 21, 22, 8]
+  Valor Utilidade:-333
+  Tempo: 0.0237s
+  Nós avaliados: 245
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, -1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 46: Cachorros: 14 → 18
+  Possíveis jogadas: [9, 18, 19]
+  Valor Utilidade:-480
+  Tempo: 4.2878s
+  Nós avaliados: 46071
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, -1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 47: Onça: 8 → 12
+  Possíveis jogadas: [4, 9, 12, 14]
+  Valor Utilidade:-300
+  Tempo: 0.0112s
+  Nós avaliados: 111
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 48: Cachorros: 18 → 19
+  Possíveis jogadas: [14, 17, 19, 22, 23, 24]
+  Valor Utilidade:-600
+  Tempo: 13.1060s
+  Nós avaliados: 118106
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, -1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 49: Onça: 12 → 16
+  Possíveis jogadas: [8, 11, 16, 17, 18, 14]
+  Valor Utilidade:-200
+  Tempo: 0.0067s
+  Nós avaliados: 60
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 50: Cachorros: 13 → 18
+  Possíveis jogadas: [8, 12, 14, 18]
+  Valor Utilidade:-480
+  Tempo: 7.6968s
+  Nós avaliados: 60677
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 51: Onça: 16 → 22
+  Possíveis jogadas: [11, 12, 15, 17, 20, 21, 22]
+  Valor Utilidade:-200
+  Tempo: 0.0124s
+  Nós avaliados: 119
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 52: Cachorros: 19 → 24
+  Possíveis jogadas: [14, 24]
+  Valor Utilidade:-540
+  Tempo: 15.4161s
+  Nós avaliados: 134122
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 53: Onça: 22 → 23
+  Possíveis jogadas: [16, 17, 21, 23, 25, 26, 27, 14]
+  Valor Utilidade:-200
+  Tempo: 0.0172s
+  Nós avaliados: 128
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]
+Turno 54: Cachorros: 18 → 14
+  Possíveis jogadas: [12, 13, 14, 17, 19, 22]
+  Valor Utilidade:-540
+  Tempo: 7.3284s
+  Nós avaliados: 67147
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 0, 0]]
+Turno 55: Onça: 23 → 18
+  Possíveis jogadas: [18, 22]
+  Valor Utilidade:-200
+  Tempo: 0.0092s
+  Nós avaliados: 80
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 56: Cachorros: 6 → 12
+  Possíveis jogadas: [11, 12]
+  Valor Utilidade:-480
+  Tempo: 5.6955s
+  Nós avaliados: 49546
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 57: Onça: 18 → 22
+  Possíveis jogadas: [13, 17, 19, 22, 23, 6]
+  Valor Utilidade:-220
+  Tempo: 0.0244s
+  Nós avaliados: 226
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 58: Cachorros: 1 → 6
+  Possíveis jogadas: [6]
+  Valor Utilidade:-420
+  Tempo: 17.3588s
+  Nós avaliados: 157688
+  Estado Atual do Tabuleiro: [[1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 59: Onça: 22 → 17
+  Possíveis jogadas: [16, 17, 18, 21, 23, 25, 26, 27]
+  Valor Utilidade:-200
+  Tempo: 0.0134s
+  Nós avaliados: 112
+  Estado Atual do Tabuleiro: [[1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 60: Cachorros: 14 → 19
+  Possíveis jogadas: [8, 9, 13, 18, 19]
+  Valor Utilidade:-360
+  Tempo: 8.2497s
+  Nós avaliados: 87317
+  Estado Atual do Tabuleiro: [[1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 61: Onça: 17 → 22
+  Possíveis jogadas: [16, 18, 22]
+  Valor Utilidade:-200
+  Tempo: 0.0091s
+  Nós avaliados: 80
+  Estado Atual do Tabuleiro: [[1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 62: Cachorros: 19 → 14
+  Possíveis jogadas: [14, 18]
+  Valor Utilidade:-400
+  Tempo: 8.1006s
+  Nós avaliados: 82352
+  Estado Atual do Tabuleiro: [[1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 63: Onça: 22 → 18
+  Possíveis jogadas: [16, 17, 18, 21, 23, 25, 26, 27]
+  Valor Utilidade:-200
+  Tempo: 0.0117s
+  Nós avaliados: 112
+  Estado Atual do Tabuleiro: [[1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 64: Cachorros: 14 → 19
+  Possíveis jogadas: [8, 9, 13, 19]
+  Valor Utilidade:-420
+  Tempo: 9.9299s
+  Nós avaliados: 93041
+  Estado Atual do Tabuleiro: [[1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, -1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 65: Onça: 18 → 13
+  Possíveis jogadas: [13, 14, 17, 22, 23]
+  Valor Utilidade:-200
+  Tempo: 0.0081s
+  Nós avaliados: 81
+  Estado Atual do Tabuleiro: [[1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 1, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 66: Cachorros: 12 → 11
+  Possíveis jogadas: [8, 11, 16, 17, 18]
+  Valor Utilidade:-420
+  Tempo: 10.7444s
+  Nós avaliados: 109727
+  Estado Atual do Tabuleiro: [[1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 67: Onça: 13 → 14
+  Possíveis jogadas: [8, 12, 14, 18]
+  Valor Utilidade:-200
+  Tempo: 0.0067s
+  Nós avaliados: 62
+  Estado Atual do Tabuleiro: [[1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 68: Cachorros: 6 → 1
+  Possíveis jogadas: [1, 12]
+  Valor Utilidade:-480
+  Tempo: 9.6522s
+  Nós avaliados: 95653
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 69: Onça: 14 → 8
+  Possíveis jogadas: [8, 9, 13, 18]
+  Valor Utilidade:-200
+  Tempo: 0.0067s
+  Nós avaliados: 64
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 1, 0, 1, -1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 70: Cachorros: 5 → 6
+  Possíveis jogadas: [6]
+  Valor Utilidade:-540
+  Tempo: 9.9773s
+  Nós avaliados: 99327
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, -1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 71: Onça: 8 → 12
+  Possíveis jogadas: [4, 9, 12, 13, 14]
+  Valor Utilidade:-200
+  Tempo: 0.0099s
+  Nós avaliados: 100
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 72: Cachorros: 10 → 15
+  Possíveis jogadas: [5, 15, 16]
+  Valor Utilidade:-480
+  Tempo: 6.7864s
+  Nós avaliados: 64202
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, -1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 73: Onça: 12 → 8
+  Possíveis jogadas: [8, 13, 16, 17, 18, 10]
+  Valor Utilidade:-200
+  Tempo: 0.0067s
+  Nós avaliados: 67
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, -1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 74: Cachorros: 19 → 14
+  Possíveis jogadas: [14, 18]
+  Valor Utilidade:-420
+  Tempo: 9.4498s
+  Nós avaliados: 90980
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, -1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 75: Onça: 8 → 13
+  Possíveis jogadas: [4, 9, 12, 13]
+  Valor Utilidade:-200
+  Tempo: 0.0109s
+  Nós avaliados: 111
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, -1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 76: Cachorros: 14 → 8
+  Possíveis jogadas: [8, 9, 18, 19]
+  Valor Utilidade:-420
+  Tempo: 13.5981s
+  Nós avaliados: 127162
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 77: Onça: 13 → 12
+  Possíveis jogadas: [12, 14, 18]
+  Valor Utilidade:-200
+  Tempo: 0.0067s
+  Nós avaliados: 61
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, -1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 78: Cachorros: 8 → 9
+  Possíveis jogadas: [4, 9, 13, 14]
+  Valor Utilidade:-1000004
+  Tempo: 9.7752s
+  Nós avaliados: 84246
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, -1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 79: Onça: 12 → 18
+  Possíveis jogadas: [8, 13, 16, 17, 18, 10]
+  Valor Utilidade:-333
+  Tempo: 0.0234s
+  Nós avaliados: 216
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 80: Cachorros: 15 → 20
+  Possíveis jogadas: [10, 16, 20]
+  Valor Utilidade:-480
+  Tempo: 10.4540s
+  Nós avaliados: 90461
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 81: Onça: 18 → 13
+  Possíveis jogadas: [12, 13, 14, 17, 19, 22, 23]
+  Valor Utilidade:-200
+  Tempo: 0.0100s
+  Nós avaliados: 93
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 82: Cachorros: 24 → 19
+  Possíveis jogadas: [18, 19, 23]
+  Valor Utilidade:-480
+  Tempo: 10.2459s
+  Nós avaliados: 102125
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 83: Onça: 13 → 12
+  Possíveis jogadas: [8, 12, 14, 18]
+  Valor Utilidade:-200
+  Tempo: 0.0109s
+  Nós avaliados: 110
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 84: Cachorros: 20 → 16
+  Possíveis jogadas: [15, 16, 21]
+  Valor Utilidade:-600
+  Tempo: 11.4622s
+  Nós avaliados: 100481
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, -1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 85: Onça: 12 → 13
+  Possíveis jogadas: [8, 13, 17, 18, 10, 20]
+  Valor Utilidade:-280
+  Tempo: 0.0151s
+  Nós avaliados: 149
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 86: Cachorros: 16 → 21
+  Possíveis jogadas: [10, 12, 15, 17, 20, 21, 22]
+  Valor Utilidade:-480
+  Tempo: 15.0631s
+  Nós avaliados: 137556
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 87: Onça: 13 → 12
+  Possíveis jogadas: [8, 12, 14, 18]
+  Valor Utilidade:-200
+  Tempo: 0.0115s
+  Nós avaliados: 110
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, -1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 88: Cachorros: 21 → 16
+  Possíveis jogadas: [16, 20, 22]
+  Valor Utilidade:-600
+  Tempo: 16.0733s
+  Nós avaliados: 144577
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, -1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 89: Onça: 12 → 13
+  Possíveis jogadas: [8, 13, 17, 18, 10, 20]
+  Valor Utilidade:-280
+  Tempo: 0.0171s
+  Nós avaliados: 149
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, -1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 90: Cachorros: 19 → 24
+  Possíveis jogadas: [14, 18, 24]
+  Valor Utilidade:-480
+  Tempo: 14.9596s
+  Nós avaliados: 137556
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 91: Onça: 13 → 12
+  Possíveis jogadas: [8, 12, 14, 18]
+  Valor Utilidade:-200
+  Tempo: 0.0165s
+  Nós avaliados: 119
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, -1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 92: Cachorros: 16 → 10
+  Possíveis jogadas: [10, 15, 17, 20, 21, 22]
+  Valor Utilidade:-540
+  Tempo: 16.2319s
+  Nós avaliados: 142897
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 93: Onça: 12 → 18
+  Possíveis jogadas: [8, 13, 16, 17, 18]
+  Valor Utilidade:-200
+  Tempo: 0.0256s
+  Nós avaliados: 216
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]]
+Turno 94: Cachorros: 24 → 23
+  Possíveis jogadas: [19, 23]
+  Valor Utilidade:-466
+  Tempo: 7.9092s
+  Nós avaliados: 66736
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]]
+Turno 95: Onça: 18 → 17
+  Possíveis jogadas: [12, 13, 14, 17, 19, 22, 24]
+  Valor Utilidade:-200
+  Tempo: 0.0089s
+  Nós avaliados: 85
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]]
+Turno 96: Cachorros: 7 → 12
+  Possíveis jogadas: [8, 12]
+  Valor Utilidade:-480
+  Tempo: 9.0542s
+  Nós avaliados: 77905
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]]
+Turno 97: Onça: 17 → 18
+  Possíveis jogadas: [16, 18, 22, 7]
+  Valor Utilidade:-340
+  Tempo: 0.0183s
+  Nós avaliados: 171
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]]
+Turno 98: Cachorros: 10 → 15
+  Possíveis jogadas: [5, 15, 16]
+  Valor Utilidade:-420
+  Tempo: 13.5727s
+  Nós avaliados: 118421
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]]
+Turno 99: Onça: 18 → 24
+  Possíveis jogadas: [13, 14, 17, 19, 22, 24]
+  Valor Utilidade:-200
+  Tempo: 0.0163s
+  Nós avaliados: 161
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, 0]]
+Turno 100: Cachorros: 23 → 22
+  Possíveis jogadas: [18, 22]
+  Valor Utilidade:-480
+  Tempo: 16.0725s
+  Nós avaliados: 149470
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0, 0, 0]]
+Turno 101: Onça: 24 → 18
+  Possíveis jogadas: [18, 19, 23]
+  Valor Utilidade:-240
+  Tempo: 0.0098s
+  Nós avaliados: 121
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 102: Cachorros: 22 → 16
+  Possíveis jogadas: [16, 17, 21, 23, 25, 26, 27]
+  Valor Utilidade:-480
+  Tempo: 43.5069s
+  Nós avaliados: 430765
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 103: Onça: 18 → 14
+  Possíveis jogadas: [13, 14, 17, 19, 22, 23, 24]
+  Valor Utilidade:-200
+  Tempo: 0.0222s
+  Nós avaliados: 225
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, -1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 104: Cachorros: 15 → 10
+  Possíveis jogadas: [10, 20]
+  Valor Utilidade:-360
+  Tempo: 10.5285s
+  Nós avaliados: 108984
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, -1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+Turno 105: Onça: 14 → 4
+  Possíveis jogadas: [8, 13, 18, 19, 4]
+  Valor Utilidade:-200
+  Tempo: 0.0189s
+  Nós avaliados: 189
+  Estado Atual do Tabuleiro: [[1, 1, 1, 1, -1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]

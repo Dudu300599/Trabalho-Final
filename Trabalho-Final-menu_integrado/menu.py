@@ -180,6 +180,7 @@ UTILIDADES = {
     "utilidade_cachorro_2": utilidade_cachorros_2,
     "utilidade_cachorro_3": utilidade_cachorros_3,
     "utilidade_cachorro_4": utilidade_cachorros_4,
+    "utilidade_cachorro_5": utilidade_cachorros_5
 }
 
 
@@ -285,7 +286,7 @@ class MenuSelecaoCompvsComp(Tela):
 
         # Coluna Cachorro com layout automático
         # Definimos a grade: cada sublista é uma linha
-        linhas_cachorro = [["0", "1","2"], ["3", "4"]]
+        linhas_cachorro = [["0", "1","2"], ["3", "4", "5"]]
 
         x_base = 750
         y_base = altura_inicial

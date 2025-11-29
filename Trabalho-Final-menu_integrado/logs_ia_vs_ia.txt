@@ -1,1 +1,7 @@
 2025-11-28 22:55:06 | Turnos: 89 | Resultado: Vitória da Onça | Profundidade Onça: 3 | Profundidade Cachorros: 6 |Cachorros Capturados: 5/5 | Função Onça: utilidade_onca_1 | Função Cachorro: utilidade_cachorros_4
+2025-11-28 23:15:14 | Turnos: 141 | Resultado: Vitória da Onça | Profundidade Onça: 3 | Profundidade Cachorros: 6 |Cachorros Capturados: 5/5 | Função Onça: utilidade_onca_1 | Função Cachorro: utilidade_cachorros_4
+2025-11-28 23:21:08 | Turnos: 63 | Resultado: Vitória da Onça | Profundidade Onça: 3 | Profundidade Cachorros: 6 |Cachorros Capturados: 5/5 | Função Onça: utilidade_onca_1 | Função Cachorro: utilidade_cachorros_4
+2025-11-28 23:36:14 | Turnos: 91 | Resultado: Vitória da Onça | Profundidade Onça: 3 | Profundidade Cachorros: 6 |Cachorros Capturados: 5/5 | Função Onça: utilidade_onca_1 | Função Cachorro: utilidade_cachorros_4
+2025-11-28 23:42:06 | Turnos: 73 | Resultado: Vitória da Onça | Profundidade Onça: 3 | Profundidade Cachorros: 6 |Cachorros Capturados: 5/5 | Função Onça: utilidade_onca_1 | Função Cachorro: utilidade_cachorros_4
+2025-11-28 23:51:04 | Turnos: 105 | Resultado: Vitória da Onça | Profundidade Onça: 3 | Profundidade Cachorros: 6 |Cachorros Capturados: 5/5 | Função Onça: utilidade_onca_1 | Função Cachorro: utilidade_cachorros_4
+2025-11-29 00:05:38 | Turnos: 113 | Resultado: Vitória da Onça | Profundidade Onça: 3 | Profundidade Cachorros: 6 |Cachorros Capturados: 5/5 | Função Onça: utilidade_onca_1 | Função Cachorro: utilidade_cachorros_4
