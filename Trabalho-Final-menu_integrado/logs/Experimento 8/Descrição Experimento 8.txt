@@ -1,6 +1,13 @@
 Experimento 8
 
+Vantagem Cachorros
 Limite de Turnos: N
 Profundidade Onça: 3
 Profundidade Cachorros: 6
+Falta de Combatividade: N
+
+Vantagem Onça
+Limite de Turnos: N
+Profundidade Onça: 6
+Profundidade Cachorros: 3
 Falta de Combatividade: N

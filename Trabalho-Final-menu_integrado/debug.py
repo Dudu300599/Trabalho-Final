@@ -409,6 +409,161 @@ def find_logs2(base_directory="logs"):
   return [experimentos[k] for k in sorted(experimentos.keys())] 
 
 def log_selection_menu():
+    """
+    Loop principal do menu de seleção de logs.
+    Páginas com 2 colunas; cada coluna mostra no máximo 15 logs.
+    Experimentos com >15 logs são quebrados em blocos de 15 e
+    repetem o título nas colunas conforme necessário.
+    """
+
+    # Pega os experimentos (lista de tuples (exp_name, [(path,name),...]))
+    experimentos = find_logs2()
+    if not experimentos:
+        print("Nenhum arquivo de log encontrado. Saindo.")
+        pygame.quit()
+        sys.exit()
+
+    # --- Preprocessamento: transformar experimentos em "chunks" de até 15 logs ---
+    # Cada chunk é (exp_name, [ (log_path, log_name), ... ]) com até 15 itens
+    chunks = []
+    CHUNK_SIZE = 15
+    for exp_name, logs in experimentos:
+        # logs é lista de tuples (full_path, filename)
+        # cria fatias de 15
+        for i in range(0, len(logs), CHUNK_SIZE):
+            slice_logs = logs[i:i+CHUNK_SIZE]
+            chunks.append((exp_name, slice_logs))
+
+    # --- Montar páginas ---
+    # Cada página tem duas colunas: page = [col_left, col_right]
+    # cada coluna é lista de chunks; cada coluna comporta no máximo CHUNK_SIZE itens no total
+    pages = []
+    current_page = [[], []]  # left, right
+    left_count = 0
+    right_count = 0
+
+    for exp_chunk in chunks:
+        chunk_len = len(exp_chunk[1])  # <= CHUNK_SIZE
+
+        # tenta colocar na esquerda
+        if left_count + chunk_len <= CHUNK_SIZE:
+            current_page[0].append(exp_chunk)
+            left_count += chunk_len
+        # senão tenta direita
+        elif right_count + chunk_len <= CHUNK_SIZE:
+            current_page[1].append(exp_chunk)
+            right_count += chunk_len
+        else:
+            # nova página e coloca na esquerda
+            pages.append(current_page)
+            current_page = [[], []]
+            left_count = 0
+            right_count = 0
+            # coloca na esquerda (garante caber, pois chunk_len <= CHUNK_SIZE)
+            current_page[0].append(exp_chunk)
+            left_count += chunk_len
+
+    # adiciona última página se tiver conteúdo
+    if current_page[0] or current_page[1]:
+        pages.append(current_page)
+
+    # Paginação
+    page = 0
+    total_pages = max(1, len(pages))
+
+    # Controles de paginação (posições já existentes no seu layout)
+    btn_prev_page_rect = pygame.Rect(20, 650, 150, 50)
+    btn_next_page_rect = pygame.Rect(190, 650, 150, 50)
+
+    while True:
+        screen.blit(fundo_menu, (0, 0))
+
+        # Título
+        title_surf = font_title.render("Selecione um Log para Replay", True, BRANCO)
+        screen.blit(title_surf, ((1280 - title_surf.get_width()) // 2, 20))
+
+        # Seleciona a página atual (duas colunas)
+        current = pages[page] if pages else [[], []]
+        left_col, right_col = current
+
+        # Áreas X das colunas
+        col_x = [100, 640]
+        start_y = 120
+
+        clickable_logs = []
+        mouse_pos = pygame.mouse.get_pos()
+
+        # Função auxiliar para desenhar uma coluna (retorna lista de rects adicionadas)
+        def draw_column(col_chunks, x_pos):
+            y = start_y
+            for (exp_name, logs) in col_chunks:
+                # Cabeçalho do experimento
+                header_surf = font_item.render(exp_name, True, BRANCO)
+                screen.blit(header_surf, (x_pos, y))
+                y += 36  # espaço após título
+
+                # Lista de logs
+                for full_path, filename in logs:
+                    if y > 600:
+                        # se exceder a área vertical, pula (não deveria acontecer
+                        # porque limitamos por chunks de 15, mas deixamos proteção)
+                        break
+                    item_surf = font_item.render(f" - {filename}", True, BRANCO)
+                    item_rect = item_surf.get_rect(topleft=(x_pos + 20, y))
+                    # highlight no hover
+                    if item_rect.collidepoint(mouse_pos):
+                        pygame.draw.rect(screen, CINZA, item_rect.inflate(10, 2))
+                    screen.blit(item_surf, item_rect)
+                    clickable_logs.append((full_path, item_rect))
+                    y += 30
+
+                y += 10  # espaço entre experimentos
+
+        # Desenha as duas colunas
+        draw_column(left_col, col_x[0])
+        draw_column(right_col, col_x[1])
+
+        # Desenha controles de página
+        page_surf = font_item.render(f"Página {page + 1} / {total_pages}", True, BRANCO)
+        page_rect = page_surf.get_rect(center=(btn_next_page_rect.right + 100, btn_next_page_rect.centery))
+        screen.blit(page_surf, page_rect)
+
+        pygame.draw.rect(screen, CINZA, btn_prev_page_rect, border_radius=5)
+        screen.blit(font_btn.render("Anterior", True, PRETO), btn_prev_page_rect.move(20, 12))
+
+        pygame.draw.rect(screen, CINZA, btn_next_page_rect, border_radius=5)
+        screen.blit(font_btn.render("Próximo", True, PRETO), btn_next_page_rect.move(25, 12))
+
+        pygame.display.flip()
+
+        # Eventos
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    return  # volta ao menu principal (ou fecha)
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Checa clique nos logs
+                for full_path, rect in clickable_logs:
+                    if rect.collidepoint(event.pos):
+                        print(f"Carregando replay: {full_path}")
+                        main_replay(full_path)
+                        break
+
+                # Paginação
+                if btn_prev_page_rect.collidepoint(event.pos):
+                    page = max(0, page - 1)
+                if btn_next_page_rect.collidepoint(event.pos):
+                    page = min(total_pages - 1, page + 1)
+
+
+
+
+def log_selection_menu2():
   """
   Loop principal do menu de seleção de logs.
   """
@@ -461,33 +616,47 @@ def log_selection_menu():
     margin_x = 80
     base_y = 100
     
+    # Lista para guardar retângulos clicáveis
+    clickable_logs = [] 
+    
+    # Desenhar itens da lista
+    y_offset = 100
+    mouse_pos = pygame.mouse.get_pos()
+    col_width = 600
+    col_x = [100, 640]
+    col_y = 120
+    exp_index = 0
+    margin_x = 80
+    base_y = 100
+    
     for i, (exp_name, logs) in enumerate(current_page_files):
-      col = exp_index % items_per_page
-      x_offset = col_x[col]
-      
-      if col == 0 and exp_index !=0:
-        col_y += 300
+        col = exp_index % items_per_page
+        x_offset = col_x[col]
+        
+        if col == 0 and exp_index !=0:
+            col_y += 300
 
-      header_surf = font_item.render(exp_name, True, BRANCO)
-      screen.blit(header_surf, (x_offset, col_y))
-      y_offset = col_y + 40
+        header_surf = font_item.render(exp_name, True, BRANCO)
+        screen.blit(header_surf, (x_offset, col_y))
+        y_offset = col_y + 40
 
-      for log_path, log_name in logs:
-        if y_offset > 600:
-          break
+        for log_path, log_name in logs:
+            if y_offset > 600:
+              break
 
-        item_surf =  font_item.render(f" - {log_name}", True, BRANCO)
-        item_rect = item_surf.get_rect(topleft=(x_offset + 20 , y_offset))
+            item_surf =  font_item.render(f" - {log_name}", True, BRANCO)
+            item_rect = item_surf.get_rect(topleft=(x_offset + 20 , y_offset))
 
-        if item_rect.collidepoint(mouse_pos):
-          pygame.draw.rect(screen, CINZA, item_rect.inflate(10,2))
+            if item_rect.collidepoint(mouse_pos):
+              pygame.draw.rect(screen, CINZA, item_rect.inflate(10,2))
 
-        screen.blit(item_surf, item_rect)
-        clickable_logs.append((log_path, item_rect))
-        y_offset += 30
+            screen.blit(item_surf, item_rect)
+            clickable_logs.append((log_path, item_rect))
+            y_offset += 30
 
-      exp_index +=1
+        exp_index +=1
 
+  
     # Desenhar controles de página
     page_surf = font_item.render(f"Página {page + 1} / {total_pages}", True, BRANCO)
     page_rect = page_surf.get_rect(center=(btn_next_page_rect.right + 100, btn_next_page_rect.centery))
