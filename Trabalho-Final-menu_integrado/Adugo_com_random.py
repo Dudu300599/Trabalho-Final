@@ -186,6 +186,40 @@ def condicao_vitoria(posicao_onca, estado_atual):
         return "Vitória dos Cachorros"
     return None
 
+#Busca em largura para calcular distância entre um cachorro e a onça
+def distancia_geodesica(inicio, objetivo, matriz_adjacencia):
+    if inicio == objetivo:
+        return 0
+    
+    fila = deque([(inicio, 0)])
+    visitado = {inicio}
+
+    while fila:
+        atual, distancia = fila.popleft()
+
+        for vizinho, ligado in enumerate(matriz_adjacencia[atual]):
+            if ligado == 1:
+
+                if vizinho == objetivo:
+                    return distancia + 1
+
+                if vizinho not in visitado:
+                    visitado.add(vizinho)
+                    fila.append((vizinho, distancia + 1 ))
+
+    return float('inf')
+
+def calculo_distancias(matriz_adjacencias):
+    distancias = [[0] * 31 for _ in range(31)]
+
+    for i in range(31):
+        for j in range(31):
+            distancias[i][j] = distancia_geodesica(i,j, matriz_adjacencias)
+    
+    return distancias
+
+#Calcula as distancias da casa x para a cara y
+distancias_calc = calculo_distancias(matriz_jogo)
 
 #Função utilidade sugerida pelo artigo
 def utilidade_onca_1(estado_atual): 
@@ -295,76 +329,57 @@ def utilidade_cachorros_4(estado_atual): ## função que junta as duas funções
 
 def utilidade_cachorros_5(estado_atual): ## função que avalia o grau da casa em que a onça está além de se preocupar com o cerco em volta da onça e riscos de capturas imediatas com pesos
 
-        #pega posição atual da onça
+    global distancias_calc, saltos_onca
+    #pega posição atual da onça
     posicao_onca = estado_atual.index(-1)
 
+    diametro = 6
+    grau_maximo = 8
+    grau_minimo = 3
+    
     #calcula o grau da casa onde está a onça
-    grau_vertice_onca = len(matriz_jogo[posicao_onca])
+    grau_vertice_onca = sum(matriz_jogo[posicao_onca])
+    termo_grau = (grau_maximo - grau_vertice_onca)/(grau_maximo-grau_minimo)
 
     #conjunto de distancias dos cachorros até a onça
     distancias = []
     for i in range(31):
         if estado_atual[i] == 1: #cachorro
-            distancia = distancia_geodesica(i, posicao_onca, matriz_jogo)
+            distancia = distancias_calc[i][posicao_onca]
             if distancia > 0:
-                distancias.append(1 / distancia)
+                distancias.append(distancia)
+    print("Distancias coletadas: ", distancias)
     
     if len(distancias) > 0:
         proximidade_media = sum(distancias) / len(distancias)
     else:
-        proximidade_media = 0
+        proximidade_media = diametro
 
-    #número de capturas imediatas para a onça
-    capturas = capturas_disponiveis_onca(posicao_onca, estado_atual, matriz_jogo)
+
+    termo_distancia = (diametro - proximidade_media)/diametro   
+    print("termo_distancia: ", termo_distancia)
 
     #pesos 
-    w1 = 0.25
-    w2 = 0.25
-    w3 = 0.35
-
-    valor = w1 * (1 / grau_vertice_onca) + w2 * proximidade_media + w3 * capturas
+    w1 = 0.4
+    w2 = 0.6
     
-    return int(500 * valor)
 
-#Busca em largura para calcular distância entre um cachorro e a onça
-def distancia_geodesica(inicio, objetivo, matriz_adjacencia):
-    if inicio == objetivo:
-        return 0
+    valor = w1 * termo_grau + w2 * termo_distancia 
     
-    fila = deque([(inicio, 0)])
-    visitado = {inicio}
+    
+    return int(1000 * (valor -0.5))
 
-    while fila:
-        atual, distancia = fila.popleft()
 
-        for vizinho in matriz_adjacencia[atual]:
-            if vizinho == objetivo:
-                return distancia + 1
+def capturas_disponiveis_onca(posicao_onca, estado_atual, saltos_onca):
+    
+    capturas = []
+    #Saltos (capturas)
+    for destino, meio in saltos_onca.get(posicao_onca, []):
+        if estado_atual[meio] == 1 and estado_atual[destino] == 0:
+            capturas.append(destino)
 
-            if vizinho not in visitado:
-                visitado.add(vizinho)
-                fila.append((vizinho, distancia + 1 ))
+    return len(capturas)
 
-    return float('inf')
-
-def capturas_disponiveis_onca(pos_onca, estado, adjacencia):
-    capturas = 0
-
-    for vizinho in adjacencia[pos_onca]:
-        # Se há um cachorro no vizinho...
-        if estado[vizinho] == 1:
-            # ...veja se existe a casa "por trás" do vizinho
-            # Isto é: a próxima casa em linha reta.
-            for possivel_destino in adjacencia[vizinho]:
-                # Deve ser um salto válido
-                if possivel_destino != pos_onca and possivel_destino in adjacencia[pos_onca]:
-                    continue  # não é salto direto
-
-                # Casa destino deve estar vazia
-                if estado[possivel_destino] == 0:
-                    capturas += 1
-
-    return capturas
 
 
 
