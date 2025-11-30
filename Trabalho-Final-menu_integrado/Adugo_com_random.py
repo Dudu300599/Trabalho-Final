@@ -348,7 +348,7 @@ def utilidade_cachorros_5(estado_atual): ## função que avalia o grau da casa e
             distancia = distancias_calc[i][posicao_onca]
             if distancia > 0:
                 distancias.append(distancia)
-    print("Distancias coletadas: ", distancias)
+    #print("Distancias coletadas: ", distancias)
     
     if len(distancias) > 0:
         proximidade_media = sum(distancias) / len(distancias)
@@ -357,7 +357,7 @@ def utilidade_cachorros_5(estado_atual): ## função que avalia o grau da casa e
 
 
     termo_distancia = (diametro - proximidade_media)/diametro   
-    print("termo_distancia: ", termo_distancia)
+    #print("termo_distancia: ", termo_distancia)
 
     #pesos 
     w1 = 0.4

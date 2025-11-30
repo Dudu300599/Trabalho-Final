@@ -1,8 +1,0 @@
-2025-11-30 17:02:24 | Turnos: 43 | Resultado: Vitória da Onça | Profundidade Onça: 1 | Profundidade Cachorros: 2 |Cachorros Capturados: 5/5 | Função Onça: utilidade_onca_0 | Função Cachorro: utilidade_cachorros_5
-
-===== RESUMO FINAL =====
-Vitórias Onça: 1
-Vitórias Cachorros: 0
-Partidas não concluídas: 0
-Falta de Combatividade dos Cachorros: 0
-Falta de Combatividade da Onça: 0
