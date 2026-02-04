@@ -6,6 +6,13 @@ import time
 import random
 import os
 from collections import deque
+import os
+from datetime import datetime
+import copy
+
+
+
+
 
 #MATRIZ DE ADJACÊNCIA
 matriz_jogo = np.array([[0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -106,6 +113,7 @@ saltos_onca = {
     29:[(22, 26)], 
     30:[(22, 27), (28, 29)], 
 }
+
 
 estado_do_jogo = inicializacao() #Inicializa o estado inicial do tabuleiro
 
@@ -221,6 +229,7 @@ def calculo_distancias(matriz_adjacencias):
 #Calcula as distancias da casa x para a cara y
 distancias_calc = calculo_distancias(matriz_jogo)
 
+
 #Função utilidade sugerida pelo artigo
 def utilidade_onca_1(estado_atual): 
   qnt_cachorros = estado_atual.count(1)
@@ -327,6 +336,7 @@ def utilidade_cachorros_4(estado_atual): ## função que junta as duas funções
     valor = w1 * u1 + w2 * u2
     return int(max(-1000, min(1000, valor)))
 
+
 def utilidade_cachorros_5(estado_atual): ## função que avalia o grau da casa em que a onça está além de se preocupar com o cerco em volta da onça e riscos de capturas imediatas com pesos
 
     global distancias_calc, saltos_onca
@@ -368,18 +378,6 @@ def utilidade_cachorros_5(estado_atual): ## função que avalia o grau da casa e
     
     
     return int(1000 * (valor -0.5))
-
-
-def capturas_disponiveis_onca(posicao_onca, estado_atual, saltos_onca):
-    
-    capturas = []
-    #Saltos (capturas)
-    for destino, meio in saltos_onca.get(posicao_onca, []):
-        if estado_atual[meio] == 1 and estado_atual[destino] == 0:
-            capturas.append(destino)
-
-    return len(capturas)
-
 
 
 
@@ -450,123 +448,101 @@ def falta_de_combatividade(turnos_jogador):
 
 #Função minimax retorna a melhor jogada com base na função objetiva
 #Tem como entrada o estado atual do jogo, um booleano para identificar qual jogador será maximizado e a profundidade da árvore gerada.
-def minimax_onca(estado_atual, maximizador, profundidade, func_utilidade_c, func_utilidade_o, alpha=float('-inf'), beta=float('inf')):
+def minimax_onca(estado_atual, maximizador, profundidade, func_utilidade_c, func_utilidade_o):
     global nos_visitados
     nos_visitados += 1
 
     # Checar condição de parada (profundidade ou vitória)
-    if profundidade == 0 or condicao_vitoria(estado_atual.index(-1), estado_atual) in ["Vitória dos Cachorros", "Vitória da Onça"]:
-        if maximizador:
-            utilidade = func_utilidade_o(estado_atual)
-        else:
-            utilidade = func_utilidade_c(estado_atual)
-        return utilidade, estado_atual
+    condicao = condicao_vitoria(estado_atual.index(-1), estado_atual)
+    if profundidade == 0 or condicao in ["Vitória dos Cachorros", "Vitória da Onça"]:
+        Uc = -func_utilidade_c(estado_atual)
+        Uo = func_utilidade_o(estado_atual)
+        return (Uc, Uo), estado_atual
 
     if maximizador:
-        maior_avaliacao = float('-inf')
+        melhor_valor = (0, float('-inf'))
         melhores_estados = []
         for filho in gerar_estados_futuros_onca(estado_atual):
-            avaliacao, _ = minimax_onca(filho, False, profundidade - 1, func_utilidade_c, func_utilidade_o, alpha, beta)
-            if avaliacao > maior_avaliacao:
-                maior_avaliacao = avaliacao
+            valor_filho, _ = minimax_onca(filho, False, profundidade - 1,func_utilidade_c, func_utilidade_o)
+            if valor_filho[1] > melhor_valor[1]:
+                melhor_valor = valor_filho
                 melhores_estados = [filho]
-            elif avaliacao == maior_avaliacao:
+            elif valor_filho[1] == melhor_valor[1]:
                 melhores_estados.append(filho)
-            
-            alpha = max(alpha, avaliacao)
-            if beta <= alpha:
-                break  # poda beta
-
-        melhor_estado = random.choice(melhores_estados)
-        #print(f"Valor: {maior_avaliacao}, Melhor Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
-        return maior_avaliacao, melhor_estado
+        
+        melhor_estado = random.choice(melhores_estados) if melhores_estados else None
+        return melhor_valor, melhor_estado
 
     else:
-        menor_avaliacao = float('inf')
+        melhor_valor = (float('inf'), 0)
         melhores_estados = []
         for filho in gerar_estados_futuros_cachorros(estado_atual):
-            avaliacao, _ = minimax_onca(filho, True, profundidade - 1, func_utilidade_c, func_utilidade_o, alpha, beta)
-            if avaliacao < menor_avaliacao:
-                menor_avaliacao = avaliacao
+            valor_filho, _ = minimax_onca(filho, True, profundidade - 1,func_utilidade_c, func_utilidade_o)
+            if valor_filho[0] < melhor_valor[0]:
+                melhor_valor = valor_filho
                 melhores_estados = [filho]
-            elif avaliacao == menor_avaliacao:
+            elif valor_filho[0] == melhor_valor[0]:
                 melhores_estados.append(filho)
-            
-            beta = min(beta, avaliacao)
-            if beta <= alpha:
-                break  # poda alfa
 
         melhor_estado = random.choice(melhores_estados)
-        #print(f"Valor: {menor_avaliacao}, Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
-        return menor_avaliacao, melhor_estado
+        return melhor_valor, melhor_estado
 
 
-
-#Função minimax retorna a melhor jogada com base na função objetiva
-#Tem como entrada o estado atual do jogo, um booleano para identificar qual jogador será maximizado e a profundidade da árvore gerada.
-def minimax_cachorro(estado_atual, maximizador, profundidade,func_utilidade_c, func_utilidade_o, alpha=float('-inf'), beta=float('inf')):
+def minimax_cachorro(estado_atual,maximizador, profundidade,func_utilidade_c,func_utilidade_o):
     global nos_visitados
     nos_visitados += 1
 
-    # Checar condição de parada (profundidade ou vitória)
-    # Verifica vitória imediata
-    resultado = condicao_vitoria(estado_atual.index(-1), estado_atual)
-    if resultado == "Vitória dos Cachorros":
-        # vitória dos cachorros = muito bom para eles, muito ruim para a onça
-        return 1000000 + profundidade, estado_atual
-
-    elif resultado == "Vitória da Onça":
-        return -1000000 - profundidade, estado_atual
+    # -------------------------------------
+    # 1. NÓ TERMINAL
+    # -------------------------------------
+    condicao = condicao_vitoria(estado_atual.index(-1), estado_atual)
+    if profundidade == 0 or condicao in ["Vitória dos Cachorros", "Vitória da Onça"]:
+        Uc = func_utilidade_c(estado_atual)
+        Uo = -func_utilidade_o(estado_atual)
+        return (Uc, Uo), estado_atual
     
-    # Caso base: profundidade chegou a 0
-    if profundidade == 0:
-        if maximizador:
-            utilidade = func_utilidade_c(estado_atual)
-        else:
-            utilidade = func_utilidade_o(estado_atual)
-        return utilidade, estado_atual
-
-    
+    print(f"Visitando nó #{nos_visitados} — profundidade {profundidade}")
+    # =============================
+    # 2. MAX — CACHORROS
+    # =============================
     if maximizador:
-        maior_avaliacao = float('-inf')
+        melhor_valor = (float('-inf'), 0)
         melhores_estados = []
+
         for filho in gerar_estados_futuros_cachorros(estado_atual):
-            avaliacao, _ = minimax_cachorro(filho, False, profundidade - 1, func_utilidade_c, func_utilidade_o, alpha, beta)
-            if avaliacao > maior_avaliacao:
-                maior_avaliacao = avaliacao
+            valor_filho, _ = minimax_cachorro(filho, False, profundidade - 1,func_utilidade_c, func_utilidade_o)
+            if valor_filho[0] > melhor_valor[0]:
+                melhor_valor = valor_filho
                 melhores_estados = [filho]
-            elif avaliacao == maior_avaliacao:
+            elif valor_filho[0] == melhor_valor[0]:
                 melhores_estados.append(filho)
-            
-            alpha = max(alpha, avaliacao)
-            if beta <= alpha:
-                break  # poda beta
 
-        melhor_estado = random.choice(melhores_estados)
-        #print(f"Valor: {maior_avaliacao}, Melhor Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
-        return maior_avaliacao, melhor_estado
+        melhor_estado = random.choice(melhores_estados) if melhores_estados else None
+        return melhor_valor, melhor_estado
 
+    # =============================
+    # 3. MIN — ONÇA
+    # =============================
     else:
-        menor_avaliacao = float('inf')
+        melhor_valor = (0, float('inf'))
         melhores_estados = []
+
         for filho in gerar_estados_futuros_onca(estado_atual):
-            avaliacao, _ = minimax_cachorro(filho, True, profundidade - 1, func_utilidade_c, func_utilidade_o, alpha, beta)
-            if avaliacao < menor_avaliacao:
-                menor_avaliacao = avaliacao
+            valor_filho, _ = minimax_cachorro(filho, True, profundidade - 1,func_utilidade_c, func_utilidade_o)
+            if valor_filho[1] < melhor_valor[1]:
+                melhor_valor = valor_filho
                 melhores_estados = [filho]
-            elif avaliacao == menor_avaliacao:
+            elif valor_filho[1] == melhor_valor[1]:
                 melhores_estados.append(filho)
-            
-            beta = min(beta, avaliacao)
-            if beta <= alpha:
-                break  # poda alfa
 
         melhor_estado = random.choice(melhores_estados)
-        #print(f"Valor: {menor_avaliacao}, Posição: {melhor_estado.index(-1)}, Estado do tabuleiro: {melhor_estado}")
-        return menor_avaliacao, melhor_estado
+        return melhor_valor, melhor_estado
+
+
+
+
+
     
-import os
-from datetime import datetime
 
 def salvar_log(historico_partida, modo_jogo, historico_estados_jogo, profundidade_onca, profundidade_cachorros, utilidade_onca_func, utilidade_cachorros_func):
     """
@@ -1021,6 +997,9 @@ def adugo_run_ia_vs_ia(
                                 func_utilidade_c= utilidade_cachorros_func,
                                 func_utilidade_o= utilidade_onca_1
                             )
+                            print("\n========================================")
+                            print(f"TOTAL DE NÓS AVALIADOS: {nos_visitados}")
+                            print("========================================")
                         else:
                             valor, melhor_jogada = minimax_cachorro(
                                 estado_do_jogo,
@@ -1078,7 +1057,6 @@ def adugo_run_ia_vs_ia(
                     historico_cachorros.append((origem,destino))
 
                 nos_visitados = 0
-                import copy
                 move_piece(origem, destino)
                 historico_estados_jogo.append(copy.deepcopy(estado_do_jogo))
                 resultado = condicao_vitoria(estado_do_jogo.index(-1), estado_do_jogo)
@@ -1155,6 +1133,75 @@ def adugo_run_ia_vs_ia(
 
                
 
+        draw_board()
+        pygame.display.flip()
+        clock.tick(60)
+
+def adugo_run_player_vs_player():
+    global selected, turno, fim_de_jogo, vencedor, cont_turno, capturados
+    global estado_do_jogo
+
+    # Reinicia o estado para garantir uma partida limpa ao iniciar
+    estado_do_jogo = inicializacao()
+    turno = -1  # Onça começa
+    fim_de_jogo = False
+    vencedor = None
+    selected = None
+    cont_turno = 0
+    capturados = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    # Retorna ao menu e limpa variáveis
+                    return "menu"
+
+            elif event.type == pygame.MOUSEBUTTONDOWN and not fim_de_jogo:
+                mouse_pos = pygame.mouse.get_pos()
+                idx = get_vertex_clicked(mouse_pos)
+
+                if idx is not None:
+                    # 1. Tentar selecionar uma peça
+                    if selected is None:
+                        # Verifica se o clique foi na peça do jogador do turno atual
+                        if estado_do_jogo[idx] == turno:
+                            selected = idx
+                    
+                    # 2. Tentar mover a peça selecionada
+                    else:
+                        # Se clicar na mesma peça, cancela a seleção
+                        if idx == selected:
+                            selected = None
+                        else:
+                            # Tenta realizar o movimento usando sua lógica existente
+                            if move_piece(selected, idx):
+                                cont_turno += 1
+                                
+                                # Verifica se alguém venceu após o movimento
+                                posicao_onca = estado_do_jogo.index(-1)
+                                resultado = condicao_vitoria(posicao_onca, estado_do_jogo)
+                                
+                                if resultado:
+                                    fim_de_jogo = True
+                                    vencedor = resultado
+                                else:
+                                    # Troca o turno: -1 vira 1, 1 vira -1
+                                    turno *= -1
+                                
+                                selected = None  # Limpa seleção após movimento bem sucedido
+                            else:
+                                # Se o movimento for inválido, mas clicar em outra peça sua, troca a seleção
+                                if estado_do_jogo[idx] == turno:
+                                    selected = idx
+                                else:
+                                    selected = None
+
+        # Renderização
         draw_board()
         pygame.display.flip()
         clock.tick(60)
