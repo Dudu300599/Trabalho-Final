@@ -96,7 +96,7 @@ class MenuJogar(Tela):
                 for texto, rect in self.botoes:
                     if rect.collidepoint(event.pos):
                         if texto == "Player vs Player":
-                            self.jogo.mudar_estado(MenuPrincipal(self.jogo))
+                            adugo_run_player_vs_player()
                         elif texto == "Player vs Comp":
                             self.jogo.mudar_estado(MenuSelecaoPlayervsComp(self.jogo))
                         elif texto == "Comp vs Comp(fins de estudo)":
@@ -286,7 +286,7 @@ class MenuSelecaoCompvsComp(Tela):
 
         # Coluna Cachorro com layout automático
         # Definimos a grade: cada sublista é uma linha
-        linhas_cachorro = [["0", "1","2"], ["3", "4", "5"]]
+        linhas_cachorro = [["0", "1","2"], ["3", "4","5"]]
 
         x_base = 750
         y_base = altura_inicial
